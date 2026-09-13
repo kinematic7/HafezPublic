@@ -1,6 +1,7 @@
 // App.js
 import { LANGUAGES } from "./languages.js";
 import { SURAHS } from "./surahs.js";
+import { TRANSLATION_NOTES } from "./translationdisclaimer.js";
 
 const { useState, useEffect, useRef, useMemo } = React;
 
@@ -131,7 +132,7 @@ function QuranSearchApp() {
     } else {
       const selectedLangObj = LANGUAGES.find((l) => l.code === language);
       const selectedLangLabel = selectedLangObj ? selectedLangObj.name : language;
-      languageInstruction = `\n\n(Respond strictly in ${selectedLangLabel}. Please translate the response, as well as the full relevant Quranic verses and Hadith sources, completely into ${selectedLangLabel}. Quote the entire quranic verse or hadith. At the very end of your response, include a brief note in ${selectedLangLabel} stating that AI translations may not be 100% accurate.)`;
+      languageInstruction = `\n\n(Respond strictly in ${selectedLangLabel}. Please translate the response, as well as the full relevant Quranic verses and Hadith sources, completely into ${selectedLangLabel}. Quote the entire quranic verse or hadith.)`;
     }
 
     const finalPayloadQuery = currentQuery + languageInstruction;
@@ -156,7 +157,11 @@ function QuranSearchApp() {
         throw new Error("Server returned status " + response.status);
       }
 
-      const data = await response.json();
+      const data = await response.json();      
+      const note = TRANSLATION_NOTES[language];
+      if (data.chatbot_response) {
+        data.chatbot_response += `\n\n${note}`;
+      }    
 
       if (
         typeof data === "object" &&
