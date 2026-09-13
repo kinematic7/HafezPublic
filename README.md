@@ -29,6 +29,8 @@ The project includes a backend API and UI folder.
    - `sahih_bukhari.json`
    - `sahih_muslim.json`
 
+All JSON files are included in the Data folder of the project.
+
 If the ingestion side is successful your LLM should be ready to respond.
 
 ---
