@@ -2,6 +2,7 @@
 import { LANGUAGES } from "./languages.js";
 import { SURAHS } from "./surahs.js";
 import { TRANSLATION_NOTES } from "./translationdisclaimer.js";
+import {PLACEHOLDER_TEXTS} from "./placeholder.js";
 
 const { useState, useEffect, useRef, useMemo } = React;
 
@@ -593,7 +594,7 @@ function QuranSearchApp() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ask about verses, hadiths, or themes..."
+          placeholder={PLACEHOLDER_TEXTS[language] || "Ask about verses, hadiths, or themes..."}
           disabled={loading}
         />
 
