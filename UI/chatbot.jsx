@@ -251,7 +251,7 @@ function QuranSearchApp() {
     <div className="app-container">
       {/* STANDALONE CORPUS FILTER BAR AT THE VERY TOP */}
       <div style={{ background: "rgba(16, 185, 129, 0.15)", borderBottom: "1px solid rgba(16, 185, 129, 0.3)", padding: "10px 20px", display: "flex", justifyContent: "center", alignItems: "center", gap: "15px", flexWrap: "wrap" }}>
-        <span className="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.5px" }}>Search Corpus Filter:</span>
+        <span className="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.5px" }}> <span className="title-icon">﷽</span>Quran & Hadith Insights:</span>
         <div style={{ display: "flex", background: "rgba(0,0,0,0.3)", padding: "4px", borderRadius: "8px", gap: "6px" }}>
           <button
             onClick={() => setSourceType("both")}
@@ -306,11 +306,11 @@ function QuranSearchApp() {
 
       {/* HEADER */}
       <div className="app-header">
-        <div className="app-title-area hide-on-mobile">
+        {/* <div className="app-title-area hide-on-mobile">
           <h2 className="app-title ">
             <span className="title-icon">﷽</span> Quran & Hadith Insights
           </h2>
-        </div>
+        </div> */}
 
         <div className="header-actions" style={{ display: "flex", alignItems: "center", gap: "15px", flexWrap: "wrap" }}>
           {/* SURAH DROPDOWN */}
