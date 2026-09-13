@@ -15,6 +15,109 @@ const SURAH_VERSE_COUNTS = {
   111: 5, 112: 4, 113: 5, 114: 6
 };
 
+// Top 99 spoken global languages sorted alphabetically by display name
+const LANGUAGES = [
+  { code: "afrikaans", name: "Afrikaans" },
+  { code: "albanian", name: "Albanian (Shqip)" },
+  { code: "amharic", name: "Amharic (አማርኛ)" },
+  { code: "arabic", name: "Arabic (العربية)" },
+  { code: "armenian", name: "Armenian (Հայերեն)" },
+  { code: "assamese", name: "Assamese (অসমীয়া)" },
+  { code: "azerbaijani", name: "Azerbaijani (Azərbaycan)" },
+  { code: "bambara", name: "Bambara (Bamanankan)" },
+  { code: "bashkir", name: "Bashkir (Башҡорт)" },
+  { code: "basque", name: "Basque (Euskara)" },
+  { code: "belarusian", name: "Belarusian (Беларуская)" },
+  { code: "bangla", name: "Bengali / Bangla (বাংলা)" },
+  { code: "bhojpuri", name: "Bhojpuri (भोजपुरी)" },
+  { code: "bosnian", name: "Bosnian (Bosanski)" },
+  { code: "bulgarian", name: "Bulgarian (Български)" },
+  { code: "burmese", name: "Burmese (မြန်မာ)" },
+  { code: "cantonese", name: "Cantonese (粵語)" },
+  { code: "catalan", name: "Catalan (Català)" },
+  { code: "cebuano", name: "Cebuano (Bisaya)" },
+  { code: "chhattisgarhi", name: "Chhattisgarhi (छत्तीसगढ़ी)" },
+  { code: "chinese_mandarin", name: "Chinese Mandarin (中文)" },
+  { code: "czech", name: "Czech (Čeština)" },
+  { code: "danish", name: "Danish (Dansk)" },
+  { code: "dutch", name: "Dutch (Nederlands)" },
+  { code: "english", name: "English" },
+  { code: "esperanto", name: "Esperanto" },
+  { code: "estonian", name: "Estonian (Eesti)" },
+  { code: "filipino", name: "Filipino / Tagalog" },
+  { code: "finnish", name: "Finnish (Suomi)" },
+  { code: "french", name: "French (Français)" },
+  { code: "fulani", name: "Fulani / Fula (Pulaar)" },
+  { code: "galician", name: "Galician (Galego)" },
+  { code: "georgian", name: "Georgian (ქართული)" },
+  { code: "german", name: "German (Deutsch)" },
+  { code: "greek", name: "Greek (Ελληνικά)" },
+  { code: "gujarati", name: "Gujarati (ગુજરાતી)" },
+  { code: "haitian_creole", name: "Haitian Creole (Kreyòl)" },
+  { code: "hausa", name: "Hausa" },
+  { code: "hebrew", name: "Hebrew (עברית)" },
+  { code: "hindi", name: "Hindi (हिन्दी)" },
+  { code: "hmong", name: "Hmong (Hmoob)" },
+  { code: "hungarian", name: "Hungarian (Magyar)" },
+  { code: "icelandic", name: "Icelandic (Íslenska)" },
+  { code: "igbo", name: "Igbo" },
+  { code: "indonesian", name: "Indonesian (Bahasa Indonesia)" },
+  { code: "irish", name: "Irish (Gaeilge)" },
+  { code: "italian", name: "Italian (Italiano)" },
+  { code: "japanese", name: "Japanese (日本語)" },
+  { code: "javanese", name: "Javanese (Basa Jawa)" },
+  { code: "kannada", name: "Kannada (ಕನ್ನಡ)" },
+  { code: "kazakh", name: "Kazakh (Қазақ)" },
+  { code: "khmer", name: "Khmer (ភាសាខ្មែរ)" },
+  { code: "kinyarwanda", name: "Kinyarwanda" },
+  { code: "korean", name: "Korean (한국어)" },
+  { code: "kurdish", name: "Kurdish (Kurdî)" },
+  { code: "kyrgyz", name: "Kyrgyz (Кыргызча)" },
+  { code: "lao", name: "Lao (ລາວ)" },
+  { code: "latvian", name: "Latvian (Latviešu)" },
+  { code: "lithuanian", name: "Lithuanian (Lietuvių)" },
+  { code: "macedonian", name: "Macedonian (Македонски)" },
+  { code: "maithili", name: "Maithili (मैथिली)" },
+  { code: "malagasy", name: "Malagasy" },
+  { code: "malay", name: "Malay (Bahasa Melayu)" },
+  { code: "malayalam", name: "Malayalam (മലയാളം)" },
+  { code: "marathi", name: "Marathi (मराठी)" },
+  { code: "mongolian", name: "Mongolian (Монгол)" },
+  { code: "nepali", name: "Nepali (नेपाली)" },
+  { code: "norwegian", name: "Norwegian (Norsk)" },
+  { code: "odia", name: "Odia (ଓଡ଼ିଆ)" },
+  { code: "oromo", name: "Oromo (Afaan Oromoo)" },
+  { code: "pashto", name: "Pashto (پښتو)" },
+  { code: "persian", name: "Persian / Farsi (فارسی)" },
+  { code: "polish", name: "Polish (Polski)" },
+  { code: "portuguese", name: "Portuguese (Português)" },
+  { code: "punjabi", name: "Punjabi (ਪੰਜਾਬੀ)" },
+  { code: "romanian", name: "Romanian (Română)" },
+  { code: "russian", name: "Russian (Русский)" },
+  { code: "saraiki", name: "Saraiki (سرائیکی)" },
+  { code: "serbian", name: "Serbian (Српски)" },
+  { code: "shona", name: "Shona (chiShona)" },
+  { code: "sindhi", name: "Sindhi (سنڌي)" },
+  { code: "sinhala", name: "Sinhala (සිංහල)" },
+  { code: "slovak", name: "Slovak (Slovenčina)" },
+  { code: "slovenian", name: "Slovenian (Slovenščina)" },
+  { code: "somali", name: "Somali (Soomaali)" },
+  { code: "spanish", name: "Spanish (Español)" },
+  { code: "sundanese", name: "Sundanese (Basa Sunda)" },
+  { code: "swahili", name: "Swahili (Kiswahili)" },
+  { code: "swedish", name: "Swedish (Svenska)" },
+  { code: "tamil", name: "Tamil (தமிழ்)" },
+  { code: "telugu", name: "Telugu (తెలుగు)" },
+  { code: "thai", name: "Thai (ไทย)" },
+  { code: "turkish", name: "Turkish (Türkçe)" },
+  { code: "ukrainian", name: "Ukrainian (Українська)" },
+  { code: "urdu", name: "Urdu (اردو)" },
+  { code: "uzbek", name: "Uzbek (Oʻzbek)" },
+  { code: "vietnamese", name: "Vietnamese (Tiếng Việt)" },
+  { code: "yoruba", name: "Yoruba (Yorùbá)" },
+  { code: "zulu", name: "Zulu (isiZulu)" }
+];
+
 function renderFormattedText(text) {
   if (!text) return null;
   const lines = text.split("\n");
@@ -47,6 +150,7 @@ function QuranSearchApp() {
 
   const [theme, setTheme] = useState("dark");
   const [sourceType, setSourceType] = useState("both"); // 'both' | 'quran' | 'hadith'
+  const [language, setLanguage] = useState("english");
 
   const [showArabic, setShowArabic] = useState(true);
   const [showTransliteration, setShowTransliteration] = useState(true);
@@ -112,6 +216,18 @@ function QuranSearchApp() {
       { role: "user", content: currentQuery, isStructured: false }
     ]);
 
+    // Construct instruction depending on selected language
+    let languageInstruction = "";
+    if (language === "english") {
+      languageInstruction = "\n\n(Respond in English)";
+    } else {
+      const selectedLangObj = LANGUAGES.find((l) => l.code === language);
+      const selectedLangLabel = selectedLangObj ? selectedLangObj.name : language;
+      languageInstruction = `\n\n(Respond strictly in ${selectedLangLabel}. Please translate the response, as well as the full relevant Quranic verses and Hadith sources, completely into ${selectedLangLabel}. Quote the entire quranic verse or hadith. At the very end of your response, include a brief note in ${selectedLangLabel} stating that AI translations may not be 100% accurate.)`;
+    }
+
+    const finalPayloadQuery = currentQuery + languageInstruction;
+
     try {
       const response = await fetch("http://localhost:8000/query", {
         method: "POST",
@@ -120,10 +236,11 @@ function QuranSearchApp() {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          query: currentQuery,
+          query: finalPayloadQuery,
           n_results: 5,
           surah_filter: 0,
-          source_type: sourceType
+          source_type: sourceType,
+          language: language
         })
       });
 
@@ -272,6 +389,31 @@ function QuranSearchApp() {
         </div>
 
         <div className="header-actions" style={{ display: "flex", alignItems: "center", gap: "15px", flexWrap: "wrap" }}>
+          {/* LANGUAGE DROPDOWN */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span style={{ fontSize: "12px", fontWeight: "600" }}>Language:</span>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              style={{
+                padding: "6px 10px",
+                borderRadius: "6px",
+                border: "1px solid rgba(16, 185, 129, 0.4)",
+                background: "rgba(0, 0, 0, 0.2)",
+                color: "inherit",
+                fontSize: "12px",
+                fontWeight: "600",
+                cursor: "pointer"
+              }}
+            >
+              {LANGUAGES.map((lang) => (
+                <option key={lang.code} value={lang.code} style={{ background: "#1f2937", color: "#fff" }}>
+                  {lang.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="display-controls">
             <label className="switch-control">
               <input
@@ -282,23 +424,28 @@ function QuranSearchApp() {
               <span>Arabic</span>
             </label>
 
-            <label className="switch-control">
-              <input
-                type="checkbox"
-                checked={showTransliteration}
-                onChange={(e) => setShowTransliteration(e.target.checked)}
-              />
-              <span>Transliteration</span>
-            </label>
+            {/* Conditionally render Transliteration and Translation controls only for English */}
+            {language === "english" && (
+              <>
+                <label className="switch-control">
+                  <input
+                    type="checkbox"
+                    checked={showTransliteration}
+                    onChange={(e) => setShowTransliteration(e.target.checked)}
+                  />
+                  <span>Transliteration</span>
+                </label>
 
-            <label className="switch-control">
-              <input
-                type="checkbox"
-                checked={showTranslation}
-                onChange={(e) => setShowTranslation(e.target.checked)}
-              />
-              <span>English</span>
-            </label>
+                <label className="switch-control">
+                  <input
+                    type="checkbox"
+                    checked={showTranslation}
+                    onChange={(e) => setShowTranslation(e.target.checked)}
+                  />
+                  <span>Translation</span>
+                </label>
+              </>
+            )}
           </div>
 
           <div className="theme-switch-wrapper">
@@ -425,13 +572,15 @@ function QuranSearchApp() {
                             <div className="arabic-text">{verse.arabic}</div>
                           )}
 
-                          {showTransliteration && verse.transliteration && (
+                          {/* Render transliteration only if language is English */}
+                          {language === "english" && showTransliteration && verse.transliteration && (
                             <div className="transliteration-text">
                               {verse.transliteration}
                             </div>
                           )}
 
-                          {showTranslation && verse.translation && (
+                          {/* Render translation only if language is English */}
+                          {language === "english" && showTranslation && verse.translation && (
                             <div className="english-translation">
                               {renderFormattedText(verse.translation)}
                             </div>
@@ -441,8 +590,8 @@ function QuranSearchApp() {
                     </div>
                   )}
 
-                  {/* Hadith References Section */}
-                  {msg.hadiths && msg.hadiths.length > 0 && (
+                  {/* Hadith References Section - Rendered only when language is English */}
+                  {language === "english" && msg.hadiths && msg.hadiths.length > 0 && (
                     <div style={{ marginTop: "20px" }}>
                       <div className="verses-section-header">
                         <span>Retrieved Sahih Hadith References</span>
