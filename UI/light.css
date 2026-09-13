@@ -599,3 +599,9 @@ body {
   font-size: 14px;
   user-select: none;
 }
+
+@media (max-width: 767px) {
+  .theme-switch-wrapper {
+    display: none !important;
+  }
+}
