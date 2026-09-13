@@ -7,8 +7,7 @@ class LLM:
         self.url = OLLAMA_URL
         self.model = SELECTED_MODEL
 
-    def ask(self, question: str) -> str:
-        print(self.model)
+    def ask(self, question: str) -> str:        
         payload = {
             "model": self.model,
             "messages": [

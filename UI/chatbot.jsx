@@ -98,7 +98,7 @@ const LANGUAGES = [
   { code: "serbian", name: "Serbian (Српски)" },
   { code: "shona", name: "Shona (chiShona)" },
   { code: "sindhi", name: "Sindhi (سنڌي)" },
-  { code: "sinhala", name: "Sinhala (සිංහල)" },
+  { code: "sinhala", name: "Sinhala (සිංহල)" },
   { code: "slovak", name: "Slovak (Slovenčina)" },
   { code: "slovenian", name: "Slovenian (Slovenščina)" },
   { code: "somali", name: "Somali (Soomaali)" },
@@ -159,7 +159,7 @@ function QuranSearchApp() {
   const [fromVerse, setFromVerse] = useState(1);
   const [toVerse, setToVerse] = useState(1);
 
-  const messagesEndRef = useRef(null);
+  const lastUserMessageRef = useRef(null);
 
   useEffect(() => {
     const linkElement = document.getElementById("theme-stylesheet");
@@ -172,13 +172,12 @@ function QuranSearchApp() {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
+  // Scrolls smoothly to align the top of the user's question with the top of the viewport
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, loading]);
+    if (loading && lastUserMessageRef.current) {
+      lastUserMessageRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [loading]);
 
   const activeVerseContext = useMemo(() => {
     const lastMsg = messages[messages.length - 1];
@@ -211,8 +210,8 @@ function QuranSearchApp() {
     setQuery("");
     setLoading(true);
 
-    setMessages((prev) => [
-      ...prev,
+    // CLEAR PREVIOUS MESSAGES: Replace existing array instead of appending
+    setMessages([
       { role: "user", content: currentQuery, isStructured: false }
     ]);
 
@@ -280,6 +279,7 @@ function QuranSearchApp() {
           };
         });
 
+        // Appends assistant response to the current query state
         setMessages((prev) => [
           ...prev,
           {
@@ -322,11 +322,16 @@ function QuranSearchApp() {
     }
   };
 
+  // Compute the index of the latest user message to attach the scroll ref
+  const lastUserMsgIndex = messages.reduce((lastIdx, msg, idx) => {
+    return msg.role === "user" ? idx : lastIdx;
+  }, -1);
+
   return (
     <div className="app-container">
       {/* STANDALONE CORPUS FILTER BAR AT THE VERY TOP */}
       <div style={{ background: "rgba(16, 185, 129, 0.15)", borderBottom: "1px solid rgba(16, 185, 129, 0.3)", padding: "10px 20px", display: "flex", justifyContent: "center", alignItems: "center", gap: "15px", flexWrap: "wrap" }}>
-        <span style={{ fontSize: "12px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.5px" }}>Search Corpus Filter:</span>
+        <span className="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.5px" }}>Search Corpus Filter:</span>
         <div style={{ display: "flex", background: "rgba(0,0,0,0.3)", padding: "4px", borderRadius: "8px", gap: "6px" }}>
           <button
             onClick={() => setSourceType("both")}
@@ -381,11 +386,10 @@ function QuranSearchApp() {
 
       {/* HEADER */}
       <div className="app-header">
-        <div className="app-title-area">
-          <h2 className="app-title">
+        <div className="app-title-area hide-on-mobile">
+          <h2 className="app-title ">
             <span className="title-icon">﷽</span> Quran & Hadith Insights
           </h2>
-          <span className="app-subtitle">Hafez - Dual-Corpus AI Search</span>
         </div>
 
         <div className="header-actions" style={{ display: "flex", alignItems: "center", gap: "15px", flexWrap: "wrap" }}>
@@ -414,7 +418,8 @@ function QuranSearchApp() {
             </select>
           </div>
 
-          <div className="display-controls">
+          {/* DISPLAY CONTROLS */}
+          <div className="display-controls hide-on-mobile">
             <label className="switch-control">
               <input
                 type="checkbox"
@@ -424,7 +429,6 @@ function QuranSearchApp() {
               <span>Arabic</span>
             </label>
 
-            {/* Conditionally render Transliteration and Translation controls only for English */}
             {language === "english" && (
               <>
                 <label className="switch-control">
@@ -448,6 +452,7 @@ function QuranSearchApp() {
             )}
           </div>
 
+          {/* THEME SWITCH WRAPPER */}
           <div className="theme-switch-wrapper">
             <span className="theme-icon">☀️</span>
             <label className="theme-switch">
@@ -498,7 +503,6 @@ function QuranSearchApp() {
             <span className="range-count-badge">
               Showing {Math.min(toVerse - fromVerse + 1, activeVerseContext.totalCount)} of {activeVerseContext.totalCount}
             </span>
-
           </div>
         </div>
       )}
@@ -527,6 +531,7 @@ function QuranSearchApp() {
           return (
             <div
               key={idx}
+              ref={idx === lastUserMsgIndex ? lastUserMessageRef : null}
               className={`message-bubble ${
                 msg.role === "user" ? "message-user" : "message-assistant"
               }`}
@@ -624,8 +629,6 @@ function QuranSearchApp() {
             <span>Searching database and generating response...</span>
           </div>
         )}
-
-        <div ref={messagesEndRef} />
       </div>
 
       {/* INPUT BAR */}

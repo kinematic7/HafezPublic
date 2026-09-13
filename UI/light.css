@@ -601,7 +601,22 @@ body {
 }
 
 @media (max-width: 767px) {
-  .theme-switch-wrapper {
+  /* Existing mobile-hide helper classes */
+  .theme-switch-wrapper,
+  .hide-on-mobile,
+  .app-subtitle {
     display: none !important;
+  }
+
+  /* Optional: Optimize header spacing on mobile screens */
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
   }
 }
