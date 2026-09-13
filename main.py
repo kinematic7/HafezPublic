@@ -4,6 +4,7 @@ from typing import Dict, List, Optional, Tuple
 from fastapi import BackgroundTasks, FastAPI, File, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
+from pathlib import Path
 
 from chatbot import ChatBot
 from quraningester import QuranIngester
@@ -177,13 +178,15 @@ def load_json_dataset(file_paths: List[str], target_map: Dict[Tuple[int, int], s
         print(f"Warning: None of {file_paths} were found. {label.capitalize()} lookups will return default notices.")
 
 
+BASE_DIR = Path(__file__).resolve().parent
+DATA_DIR = BASE_DIR / "Data"
+
 @app.on_event("startup")
 def load_datasets():
     """Loads translation, transliteration, and Arabic JSON datasets into O(1) hash maps on app startup."""
-    load_json_dataset(["transliteration.json", "quran_transliteration.json"], TRANSLITERATION_MAP, "transliteration")
-    load_json_dataset(["arabic.json", "quran_arabic.json"], ARABIC_MAP, "Arabic")
-    load_json_dataset(["translation.json", "quran_translation.json", "quran.json"], TRANSLATION_MAP, "translation")
-
+    load_json_dataset([str(DATA_DIR / "transliteration.json"), str(DATA_DIR / "quran_transliteration.json")], TRANSLITERATION_MAP, "transliteration")
+    load_json_dataset([str(DATA_DIR / "arabic.json"), str(DATA_DIR / "quran_arabic.json")], ARABIC_MAP, "Arabic")
+    load_json_dataset([str(DATA_DIR / "translation.json"), str(DATA_DIR / "quran_translation.json"), str(DATA_DIR / "quran.json")], TRANSLATION_MAP, "translation")
 
 def detect_full_surah_request(query: str) -> Optional[Tuple[int, str]]:
     """

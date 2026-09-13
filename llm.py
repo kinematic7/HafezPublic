@@ -8,7 +8,7 @@ class LLM:
         self.model = SELECTED_MODEL
 
     def ask(self, question: str) -> str:
-
+        print(self.model)
         payload = {
             "model": self.model,
             "messages": [
