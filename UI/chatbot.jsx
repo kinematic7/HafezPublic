@@ -1,4 +1,6 @@
+// App.js
 import { LANGUAGES } from "./languages.js";
+import { SURAHS } from "./surahs.js";
 
 const { useState, useEffect, useRef, useMemo } = React;
 
@@ -50,6 +52,7 @@ function QuranSearchApp() {
   const [theme, setTheme] = useState("dark");
   const [sourceType, setSourceType] = useState("both"); // 'both' | 'quran' | 'hadith'
   const [language, setLanguage] = useState("english");
+  const [selectedSurah, setSelectedSurah] = useState("all");
 
   const [showArabic, setShowArabic] = useState(true);
   const [showTransliteration, setShowTransliteration] = useState(true);
@@ -71,7 +74,6 @@ function QuranSearchApp() {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
-  // Scrolls smoothly to align the top of the user's question with the top of the viewport
   useEffect(() => {
     if (loading && lastUserMessageRef.current) {
       lastUserMessageRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -102,10 +104,18 @@ function QuranSearchApp() {
     }
   }, [activeVerseContext]);
 
-  const handleSend = async () => {
-    if (!query.trim() || loading) return;
+  const handleSend = async (overrideQuery = null) => {
+    let queryToSend = overrideQuery || query;
+    if (!queryToSend.trim() || loading) return;
 
-    const currentQuery = query;
+    // Check if the input does NOT start with '[' and end with ']'
+    const trimmed = queryToSend.trim();
+    if (!(trimmed.startsWith("[") && trimmed.endsWith("]"))) {
+      // Replace case-insensitive instances of "surah" with "surâh"
+      queryToSend = queryToSend.replace(/surah/gi, "surâh");
+    }
+
+    const currentQuery = queryToSend;
     setQuery("");
     setLoading(true);
 
@@ -215,13 +225,24 @@ function QuranSearchApp() {
     }
   };
 
+  const handleSurahSelect = (e) => {
+    const value = e.target.value;
+    if (value === "all") return;
+
+    const surahObj = SURAHS.find((s) => String(s.id) === value);
+    if (surahObj) {
+      const simulatedQuery = `[Surah ${surahObj.name_en}]`;
+      handleSend(simulatedQuery);
+    }
+    setSelectedSurah("all");
+  };
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       handleSend();
     }
   };
 
-  // Compute the index of the latest user message to attach the scroll ref
   const lastUserMsgIndex = messages.reduce((lastIdx, msg, idx) => {
     return msg.role === "user" ? idx : lastIdx;
   }, -1);
@@ -292,9 +313,38 @@ function QuranSearchApp() {
         </div>
 
         <div className="header-actions" style={{ display: "flex", alignItems: "center", gap: "15px", flexWrap: "wrap" }}>
+          {/* SURAH DROPDOWN */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span class="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "600" }}>Surah:</span>
+            <select
+              value={selectedSurah}
+              onChange={handleSurahSelect}
+              disabled={loading}
+              style={{
+                padding: "6px 10px",
+                borderRadius: "6px",
+                border: "1px solid rgba(16, 185, 129, 0.4)",
+                background: "rgba(0, 0, 0, 0.2)",
+                color: "inherit",
+                fontSize: "12px",
+                fontWeight: "600",
+                cursor: "pointer"
+              }}
+            >
+              <option value="all" style={{ background: "#1f2937", color: "#fff" }}>
+                All Surahs
+              </option>
+              {SURAHS.map((surah) => (
+                <option key={surah.id} value={surah.id} style={{ background: "#1f2937", color: "#fff" }}>
+                  {surah.id}. {surah.name_en} ({surah.name_ar})
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* LANGUAGE DROPDOWN */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span style={{ fontSize: "12px", fontWeight: "600" }}>Language:</span>
+            <span class="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "600" }}>Language:</span>
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
@@ -369,7 +419,7 @@ function QuranSearchApp() {
 
       {/* PERSISTENT VERSE / PAGE FILTER BAR */}
       {activeVerseContext && activeVerseContext.totalCount > 1 && (
-        <div className="surah-range-filter-bar">
+        <div className="surah-range-filter-bar hide-on-mobile">
           <div className="range-title-group">
             <span className="range-icon">⚙</span>
             <span className="range-title">Verse Range / Page Filter</span>
@@ -544,7 +594,7 @@ function QuranSearchApp() {
 
         <button
           className="send-button"
-          onClick={handleSend}
+          onClick={() => handleSend()}
           disabled={loading || !query.trim()}
         >
           {loading ? "..." : "Send"}
