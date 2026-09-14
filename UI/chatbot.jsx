@@ -1,8 +1,16 @@
 // App.js
 import { LANGUAGES } from "./languages.js";
 import { SURAHS } from "./surahs.js";
-import { TRANSLATION_NOTES } from "./translationdisclaimer.js";
-import {PLACEHOLDER_TEXTS} from "./placeholder.js";
+import {PLACEHOLDER_TEXTS} from "./translations.js";
+import { TRANSLATION_NOTES } from "./translations.js";
+import {APP_TITLES} from "./translations.js";
+import {QURAN_HADITH_LABELS} from "./translations.js";
+import {QURAN_ONLY_LABELS} from "./translations.js";
+import {HADITH_ONLY_LABELS} from "./translations.js";
+import {ARABIC_LABELS} from "./translations.js";
+import {SURAH_LABELS} from "./translations.js";
+import {LANGUAGE_LABELS} from "./translations.js";
+import {WELCOME_LABELS} from "./translations.js";
 
 const { useState, useEffect, useRef, useMemo } = React;
 
@@ -257,7 +265,7 @@ function QuranSearchApp() {
     <div className="app-container">
       {/* STANDALONE CORPUS FILTER BAR AT THE VERY TOP */}
       <div style={{ background: "rgba(16, 185, 129, 0.15)", borderBottom: "1px solid rgba(16, 185, 129, 0.3)", padding: "10px 20px", display: "flex", justifyContent: "center", alignItems: "center", gap: "15px", flexWrap: "wrap" }}>
-        <span className="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.5px" }}> <span className="title-icon">﷽</span> Quran & Hadith Insights:</span>
+        <span className="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.5px" }}> <span className="title-icon">﷽</span> {APP_TITLES[language] || "Quran & Hadith Insights"}:</span>
         <div style={{ display: "flex", background: "rgba(0,0,0,0.3)", padding: "4px", borderRadius: "8px", gap: "6px" }}>
           <button
             onClick={() => setSourceType("both")}
@@ -273,7 +281,7 @@ function QuranSearchApp() {
               transition: "all 0.2s"
             }}
           >
-            Quran + Hadith
+            {QURAN_HADITH_LABELS[language] || "Quran & Hadith"}
           </button>
           <button
             onClick={() => setSourceType("quran")}
@@ -289,7 +297,7 @@ function QuranSearchApp() {
               transition: "all 0.2s"
             }}
           >
-            Quran Only
+            {QURAN_ONLY_LABELS[language] || "Quran Only"}
           </button>
           <button
             onClick={() => setSourceType("hadith")}
@@ -305,7 +313,7 @@ function QuranSearchApp() {
               transition: "all 0.2s"
             }}
           >
-            Hadith Only
+            {HADITH_ONLY_LABELS[language] || "Hadith Only"}
           </button>
         </div>
       </div>
@@ -321,7 +329,7 @@ function QuranSearchApp() {
         <div className="header-actions" style={{ display: "flex", alignItems: "center", gap: "15px", flexWrap: "wrap" }}>
           {/* SURAH DROPDOWN */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span class="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "600" }}>Surah:</span>
+            <span class="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "600" }}>{SURAH_LABELS[language] || "Surah"}:</span>
             <select
               value={selectedSurah}
               onChange={handleSurahSelect}
@@ -350,7 +358,7 @@ function QuranSearchApp() {
 
           {/* LANGUAGE DROPDOWN */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span class="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "600" }}>Language:</span>
+            <span class="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "600" }}>{LANGUAGE_LABELS[language] || "Language"}:</span>
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
@@ -381,7 +389,7 @@ function QuranSearchApp() {
                 checked={showArabic}
                 onChange={(e) => setShowArabic(e.target.checked)}
               />
-              <span>Arabic</span>
+              <span>{ARABIC_LABELS[language] || "Arabic"}</span>
             </label>
 
             {language === "english" && (
@@ -466,11 +474,19 @@ function QuranSearchApp() {
       <div className="chat-window">
         {messages.length === 0 && (
           <div className="empty-state-card">
-            <div className="empty-icon">📖</div>
-            <h3>Explore Scripture & Tradition</h3>
-            <p>Use the top corpus filter banner to query Quranic verses, Sahih Hadiths, or both simultaneously.</p>
+            <img 
+              src="./islam.png" 
+              alt="Islamic Symbol" 
+              style={{ width: '200px', height: '200px', objectFit: 'contain' }} 
+            />
+            <h3 style={{ fontFamily: 'serif', fontSize: '1.6rem', color: 'var(--primary)', marginBottom: '0.75rem', lineHeight: '1.8' }}>
+              بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+            </h3>
+            <p style={{ fontSize: '0.9rem', fontWeight: 'normal' }}>
+              {WELCOME_LABELS[language] || "Welcome! Ask about Quranic verses, Hadiths, or Islamic themes to get started."}
+            </p>
           </div>
-        )}
+        )}      
 
         {messages.map((msg, idx) => {
           const isLatestAssistantMessage = idx === messages.length - 1 && msg.role === "assistant";
@@ -603,7 +619,7 @@ function QuranSearchApp() {
           onClick={() => handleSend()}
           disabled={loading || !query.trim()}
         >
-          {loading ? "..." : "Send"}
+          {loading ? "..." : "➤"}
         </button>
       </div>
     </div>

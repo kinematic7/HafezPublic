@@ -618,3 +618,65 @@ body {
     justify-content: space-between;
   }
 }
+.empty-state-card {
+  max-width: 520px;
+  text-align: center;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03); /* Subtle backdrop */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(8px);
+}
+
+.empty-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 1.25rem;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.1); /* Subtle gold tint */
+}
+
+.empty-icon {
+  font-size: 1.5rem;
+}
+
+.bismillah-text {
+  font-family: "Amiri", "Traditional Arabic", "Scheherazade New", serif;
+  font-size: 1.85rem;
+  font-weight: 500;
+  line-height: 1.8;
+  color: #4caf50; /* Warm gold accent */
+  margin: 0;
+}
+
+.divider {
+  width: 40px;
+  height: 2px;
+  background: rgba(212, 175, 55, 0.3);
+  margin: 1.25rem auto;
+  border-radius: 2px;
+}
+
+.welcome-text {
+  font-size: 0.95rem;
+  font-style: italic;
+  color: #8a8d91;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.5;
+}
+
+.subtitle-text {
+  font-size: 1.05rem;
+  color: #e1e3e6;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.subtitle-text strong {
+  color: #ffffff;
+  font-weight: 600;
+}
