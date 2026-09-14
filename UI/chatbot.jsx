@@ -1,26 +1,26 @@
 // App.js
-import { LANGUAGES } from "./languages.js";
-import { SURAHS } from "./surahs.js";
-import {PLACEHOLDER_TEXTS} from "./translations.js";
-import { TRANSLATION_NOTES } from "./translations.js";
-import {APP_TITLES} from "./translations.js";
-import {QURAN_HADITH_LABELS} from "./translations.js";
-import {QURAN_ONLY_LABELS} from "./translations.js";
-import {HADITH_ONLY_LABELS} from "./translations.js";
-import {ARABIC_LABELS} from "./translations.js";
-import {SURAH_LABELS} from "./translations.js";
-import {LANGUAGE_LABELS} from "./translations.js";
-import {WELCOME_LABELS} from "./translations.js";
-import {VERSE_RANGE_PAGE_FILTER_LABELS} from "./translations.js";
-import {SHOWING_LABELS} from "./translations.js";
-import {SEARCHING_DATABASE_LABELS} from "./translations.js";
-import {FROM_LABELS} from "./translations.js";
-import {TO_LABELS} from "./translations.js";
-import {OF_LABELS} from "./translations.js";
-import {AYAH_LABELS} from "./translations.js";
-import {RETRIEVED_QURANIC_REFERENCES_LABELS} from "./translations.js";
-import {ASSISTANT_LABELS} from "./translations.js";
-import {YOU_LABELS} from "./translations.js";
+import { LANGUAGES } from "./libs/languages.js";
+import { SURAHS } from "./libs/surahs.js";
+import {PLACEHOLDER_TEXTS} from "./libs/translations.js";
+import { TRANSLATION_NOTES } from "./libs/translations.js";
+import {APP_TITLES} from "./libs/translations.js";
+import {QURAN_HADITH_LABELS} from "./libs/translations.js";
+import {QURAN_ONLY_LABELS} from "./libs/translations.js";
+import {HADITH_ONLY_LABELS} from "./libs/translations.js";
+import {ARABIC_LABELS} from "./libs/translations.js";
+import {SURAH_LABELS} from "./libs/translations.js";
+import {LANGUAGE_LABELS} from "./libs/translations.js";
+import {WELCOME_LABELS} from "./libs/translations.js";
+import {VERSE_RANGE_PAGE_FILTER_LABELS} from "./libs/translations.js";
+import {SHOWING_LABELS} from "./libs/translations.js";
+import {SEARCHING_DATABASE_LABELS} from "./libs/translations.js";
+import {FROM_LABELS} from "./libs/translations.js";
+import {TO_LABELS} from "./libs/translations.js";
+import {OF_LABELS} from "./libs/translations.js";
+import {AYAH_LABELS} from "./libs/translations.js";
+import {RETRIEVED_QURANIC_REFERENCES_LABELS} from "./libs/translations.js";
+import {ASSISTANT_LABELS} from "./libs/translations.js";
+import {YOU_LABELS} from "./libs/translations.js";
 
 
 const { useState, useEffect, useRef, useMemo } = React;
