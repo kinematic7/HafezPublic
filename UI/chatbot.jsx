@@ -11,6 +11,17 @@ import {ARABIC_LABELS} from "./translations.js";
 import {SURAH_LABELS} from "./translations.js";
 import {LANGUAGE_LABELS} from "./translations.js";
 import {WELCOME_LABELS} from "./translations.js";
+import {VERSE_RANGE_PAGE_FILTER_LABELS} from "./translations.js";
+import {SHOWING_LABELS} from "./translations.js";
+import {SEARCHING_DATABASE_LABELS} from "./translations.js";
+import {FROM_LABELS} from "./translations.js";
+import {TO_LABELS} from "./translations.js";
+import {OF_LABELS} from "./translations.js";
+import {AYAH_LABELS} from "./translations.js";
+import {RETRIEVED_QURANIC_REFERENCES_LABELS} from "./translations.js";
+import {ASSISTANT_LABELS} from "./translations.js";
+import {YOU_LABELS} from "./translations.js";
+
 
 const { useState, useEffect, useRef, useMemo } = React;
 
@@ -436,12 +447,12 @@ function QuranSearchApp() {
         <div className="surah-range-filter-bar hide-on-mobile">
           <div className="range-title-group">
             <span className="range-icon">⚙</span>
-            <span className="range-title">Verse Range / Page Filter</span>
+            <span className="range-title">{VERSE_RANGE_PAGE_FILTER_LABELS[language] || "Verse Range / Page Filter"}</span>
           </div>
 
           <div className="range-inputs">
             <label>
-              From:
+              {FROM_LABELS[language] || "From"}:
               <input
                 type="number"
                 min="1"
@@ -452,7 +463,7 @@ function QuranSearchApp() {
             </label>
 
             <label>
-              To:
+              {TO_LABELS[language] || "To"}:
               <input
                 type="number"
                 min={fromVerse}
@@ -464,7 +475,7 @@ function QuranSearchApp() {
               />
             </label>
             <span className="range-count-badge">
-              Showing {Math.min(toVerse - fromVerse + 1, activeVerseContext.totalCount)} of {activeVerseContext.totalCount}
+              {SHOWING_LABELS[language] || "Showing"} {Math.min(toVerse - fromVerse + 1, activeVerseContext.totalCount)} {OF_LABELS[language] || "of"} {activeVerseContext.totalCount}
             </span>
           </div>
         </div>
@@ -513,7 +524,7 @@ function QuranSearchApp() {
                     msg.role === "user" ? "role-user" : "role-assistant"
                   }`}
                 >
-                  {msg.role === "user" ? "You" : "Assistant"}
+                  {msg.role === "user" ? YOU_LABELS[language] || "You" : ASSISTANT_LABELS[language] || "Assistant"}
                 </span>
               </div>
 
@@ -533,14 +544,14 @@ function QuranSearchApp() {
                   {visibleVerses.length > 0 && (
                     <div>
                       <div className="verses-section-header">
-                        <span>Retrieved Quranic References</span>
+                        <span>{RETRIEVED_QURANIC_REFERENCES_LABELS[language] || "Retrieved Quranic References"}</span>
                       </div>
 
                       {visibleVerses.map((verse, vIdx) => (
                         <div key={vIdx} className="verse-card">
                           <div className="verse-badge-container">
                             <span className="verse-badge">
-                              Surah {verse.surah} • Ayah {verse.verse}
+                              {SURAH_LABELS[language] || "Surah"} {verse.surah} • {AYAH_LABELS[language] || "Ayah"} {verse.verse}
                             </span>
                           </div>
 
@@ -597,7 +608,7 @@ function QuranSearchApp() {
         {loading && (
           <div className="loading-box">
             <div className="spinner"></div>
-            <span>Searching database and generating response...</span>
+            <span>{SEARCHING_DATABASE_LABELS[language]}</span>
           </div>
         )}
       </div>
