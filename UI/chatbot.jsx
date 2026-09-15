@@ -125,6 +125,34 @@ function QuranSearchApp() {
     }
   }, [activeVerseContext]);
 
+  const translateContent = async (sourceText, selectedLangObj, language) => {
+    const sourceLangLabel = selectedLangObj ? selectedLangObj.name : language;
+
+    // Skip translation if the source text is already in English
+    if (!sourceLangLabel || sourceLangLabel.toLowerCase() === 'english') {
+      return sourceText;
+    }
+
+    const response = await fetch('http://localhost:8000/translate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        text: sourceText,
+        language_name: selectedLangObj ? selectedLangObj.name : null,
+        language: language,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Translation failed: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.translated_text;
+  };
+
   const handleSend = async (overrideQuery = null) => {
     let queryToSend = overrideQuery || query;
     if (!queryToSend.trim() || loading) return;
@@ -136,7 +164,8 @@ function QuranSearchApp() {
       queryToSend = queryToSend.replace(/surah/gi, "surâh");
     }
 
-    const currentQuery = queryToSend;
+    // Use let instead of const so currentQuery can be updated if necessary
+    let currentQuery = queryToSend;
     setQuery("");
     setLoading(true);
 
@@ -152,6 +181,10 @@ function QuranSearchApp() {
     } else {
       const selectedLangObj = LANGUAGES.find((l) => l.code === language);
       const selectedLangLabel = selectedLangObj ? selectedLangObj.name : language;
+      
+      // Reassignment works now that currentQuery is declared with 'let'
+      currentQuery = await translateContent(currentQuery, selectedLangObj, language);
+      //languageInstruction = "\n\n(Respond in English)";
       languageInstruction = `\n\n(Respond strictly in ${selectedLangLabel}. Please translate the response, as well as the full relevant Quranic verses and Hadith sources, completely into ${selectedLangLabel}. Quote the entire quranic verse or hadith.)`;
     }
 
@@ -178,8 +211,8 @@ function QuranSearchApp() {
       }
 
       const data = await response.json();      
-      const note = TRANSLATION_NOTES[language];
-      if (data.chatbot_response) {
+      const note = TRANSLATION_NOTES[language] || "";
+      if (data.chatbot_response) {        
         data.chatbot_response += `\n\n${note}`;
       }    
 

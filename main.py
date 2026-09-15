@@ -420,6 +420,15 @@ class CustomIngestRequest(BaseModel):
         description="Optional list of custom verse objects to ingest. Omit to trigger automated download.",
     )
 
+class TranslationRequest(BaseModel):
+    text: str
+    language: str
+    language_name: Optional[str] = None
+
+class TranslationResponse(BaseModel):
+    original_text: str
+    target_language: str
+    translated_text: str
 
 # --- API Endpoints ---
 
@@ -555,10 +564,37 @@ def clear_hadith_endpoint():
         )
 
 
+
+@app.post("/translate", response_model=TranslationResponse)
+async def translate_text(payload: TranslationRequest):
+    if not payload.text.strip():
+        raise HTTPException(status_code=400, detail="Text cannot be empty.")
+    
+    # Resolve the source language from either language_name or language
+    source_language = payload.language_name or payload.language
+    if not source_language or not source_language.strip():
+        raise HTTPException(status_code=400, detail="Source language must be provided.")
+
+    # Formulate prompt using the source language to translate into English
+    prompt = (
+        f"Translate the following text from {source_language} into English. "
+        f"Provide only the English translation without any explanation, context, or conversational fluff:\n\n{payload.text}"
+    )
+
+    try:
+        translated_text = chatbot.ask(prompt)
+        return TranslationResponse(
+            original_text=payload.text,
+            target_language="English",
+            translated_text=translated_text.strip()
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Translation failed: {str(e)}")
+
 @app.post("/query", tags=["Search & RAG"])
 def query_and_chat_endpoint(request: QueryRequest):
     surah_request = detect_full_surah_request(request.query)
-    
+   
     if surah_request and request.source_type in ["quran", "both"]:
         surah_num, mode = surah_request
         translations, transliterations, arabics = fetch_entire_surah(surah_num)
