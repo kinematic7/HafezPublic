@@ -372,7 +372,7 @@ function QuranSearchApp() {
         <div className="header-actions" style={{ display: "flex", alignItems: "center", gap: "15px", flexWrap: "wrap" }}>
           {/* SURAH DROPDOWN */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span class="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "600" }}>{SURAH_LABELS[language] || "Surah"}:</span>
+            <span className="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "600" }}>{SURAH_LABELS[language] || "Surah"}:</span>
             <select
               value={selectedSurah}
               onChange={handleSurahSelect}
@@ -401,7 +401,7 @@ function QuranSearchApp() {
 
           {/* LANGUAGE DROPDOWN */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span class="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "600" }}>{LANGUAGE_LABELS[language] || "Language"}:</span>
+            <span className="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "600" }}>{LANGUAGE_LABELS[language] || "Language"}:</span>
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
