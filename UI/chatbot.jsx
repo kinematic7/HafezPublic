@@ -184,7 +184,6 @@ function QuranSearchApp() {
       
       // Reassignment works now that currentQuery is declared with 'let'
       currentQuery = await translateContent(currentQuery, selectedLangObj, language);
-      //languageInstruction = "\n\n(Respond in English)";
       languageInstruction = `\n\n(Respond strictly in ${selectedLangLabel}. Please translate the response, as well as the full relevant Quranic verses and Hadith sources, completely into ${selectedLangLabel}. Quote the entire quranic verse or hadith.)`;
     }
 
