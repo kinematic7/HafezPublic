@@ -572,6 +572,7 @@ async def translate_text(payload: TranslationRequest):
     
     # Resolve the source language from either language_name or language
     source_language = payload.language_name or payload.language
+
     if not source_language or not source_language.strip():
         raise HTTPException(status_code=400, detail="Source language must be provided.")
 
@@ -586,6 +587,34 @@ async def translate_text(payload: TranslationRequest):
         return TranslationResponse(
             original_text=payload.text,
             target_language="English",
+            translated_text=translated_text.strip()
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Translation failed: {str(e)}")
+
+@app.post("/translate-from-english", response_model=TranslationResponse)
+async def translate_from_english(payload: TranslationRequest):
+    if not payload.text.strip():
+        raise HTTPException(status_code=400, detail="Text cannot be empty.")
+    
+    # Resolve the target language from either language_name or language
+    target_language = payload.language_name or payload.language
+    print(target_language)
+
+    if not target_language or not target_language.strip():
+        raise HTTPException(status_code=400, detail="Target language must be provided.")
+
+    # Formulate prompt to translate English text into the target language
+    prompt = (
+        f"Translate the following English text into {target_language}. "
+        f"Provide only the {target_language} translation without any explanation, context, or conversational fluff:\n\n{payload.text}"
+    )
+
+    try:
+        translated_text = chatbot.ask(prompt)
+        return TranslationResponse(
+            original_text=payload.text,
+            target_language=target_language,
             translated_text=translated_text.strip()
         )
     except Exception as e:
