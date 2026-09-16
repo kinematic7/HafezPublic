@@ -106,7 +106,7 @@ function renderFormattedText(text) {
   });
 }
 
-function TranslatedVerse({ text, language, selectedLangObj }) {
+function TranslatedVerse({ text, language, selectedLangObj, disableTranslation }) {
   const [displayText, setDisplayText] = useState(text);
   const [translating, setTranslating] = useState(false);
 
@@ -122,7 +122,7 @@ function TranslatedVerse({ text, language, selectedLangObj }) {
       language.toLowerCase() === "arabic" ||
       language.toLowerCase() === "ar";
 
-    if (isEnglish || isArabic) {
+    if (disableTranslation || isEnglish || isArabic) {
       setDisplayText(text);
       return;
     }
@@ -147,7 +147,7 @@ function TranslatedVerse({ text, language, selectedLangObj }) {
     return () => {
       isMounted = false;
     };
-  }, [text, language, selectedLangObj]);
+  }, [text, language, selectedLangObj, disableTranslation]);
 
   if (translating) {
     return <span style={{ opacity: 0.6, fontStyle: "italic" }}>Translating verse...</span>;
@@ -156,7 +156,7 @@ function TranslatedVerse({ text, language, selectedLangObj }) {
   return renderFormattedText(displayText);
 }
 
-function TranslatedHadith({ text, language, selectedLangObj }) {
+function TranslatedHadith({ text, language, selectedLangObj, disableTranslation }) {
   const [displayText, setDisplayText] = useState(text);
   const [translating, setTranslating] = useState(false);
 
@@ -168,7 +168,7 @@ function TranslatedHadith({ text, language, selectedLangObj }) {
       language.toLowerCase() === "english" ||
       language.toLowerCase() === "en";
 
-    if (isEnglish) {
+    if (disableTranslation || isEnglish) {
       setDisplayText(text);
       return;
     }
@@ -193,7 +193,7 @@ function TranslatedHadith({ text, language, selectedLangObj }) {
     return () => {
       isMounted = false;
     };
-  }, [text, language, selectedLangObj]);
+  }, [text, language, selectedLangObj, disableTranslation]);
 
   if (translating) {
     return <span style={{ opacity: 0.6, fontStyle: "italic" }}>Translating hadith...</span>;
@@ -393,6 +393,7 @@ function QuranSearchApp() {
           {
             role: "assistant",
             isStructured: true,
+            isSurahView: false,
             summary: data.chatbot_response || "",
             verses: verses,
             hadiths: data.retrieved_hadiths || []
@@ -424,19 +425,105 @@ function QuranSearchApp() {
     }
   };
 
-  const handleSurahSelect = (e) => {
+ const handleSurahSelect = async (e) => {
     const value = e.target.value;
-    if (value === "all") return;
+    if (value === "all" || loading) return;
 
     const surahObj = SURAHS.find((s) => String(s.id) === value);
-    if (surahObj) {
-      const simulatedQuery = `[Surah ${surahObj.name_en}]`;
-      // do nothing for now
-      handleSend(simulatedQuery);
-    }
-    setSelectedSurah("all");
-  };
+    if (!surahObj) return;
 
+    const selectedSurahNum = Number(surahObj.id);
+
+    setQuery("");
+    setLoading(true);
+
+    const userPromptText = `[Surah ${selectedSurahNum}: ${surahObj.name_en}]`;
+    
+    // CHANGE 1: Overwrite messages array completely instead of using prev state
+    setMessages([{ role: "user", content: userPromptText, isStructured: false }]);
+
+    try {
+      const response = await fetch("http://localhost:8000/surah", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          surah_num: selectedSurahNum,
+          language: language,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Surah request failed with status ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // 1. Build Arabic Map with String Key Normalization and Key Fallbacks
+      const arabicMap = new Map();
+      (data.retrieved_arabic || []).forEach((item) => {
+        const key = `${String(item.surah)}:${String(item.verse)}`;
+        const arabicText = item.text_arabic || item.text || item.arabic || "";
+        arabicMap.set(key, arabicText);
+      });
+
+      // 2. Build Transliteration Map with String Key Normalization and Key Fallbacks
+      const transliterationMap = new Map();
+      (data.retrieved_transliterations || []).forEach((item) => {
+        const key = `${String(item.surah)}:${String(item.verse)}`;
+        const transliterationText = item.transliteration || item.transliteration_text || item.text || "";
+        transliterationMap.set(key, transliterationText);
+      });
+
+      // 3. Map into unified Verse structures
+      const verses = (data.retrieved_translations || []).map((translationObj) => {
+        const key = `${String(translationObj.surah)}:${String(translationObj.verse)}`;
+
+        return {
+          surah: translationObj.surah,
+          verse: translationObj.verse,
+          translation: translationObj.translation || translationObj.text || translationObj.translation_text || "",
+          arabic: arabicMap.get(key) || translationObj.text_arabic || translationObj.arabic || "",
+          transliteration: transliterationMap.get(key) || translationObj.transliteration || "",
+        };
+      });
+
+      const note = TRANSLATION_NOTES[language] || "";
+      const summaryText = data.chatbot_response
+        ? `${data.chatbot_response}\n\n${note}`
+        : `Surah ${surahObj.name_en} (${surahObj.name_ar}) - Full Chapter View`;
+
+      // CHANGE 2: Replace state with exact 2-item array (User Prompt + Assistant Response)
+      setMessages([
+        { role: "user", content: userPromptText, isStructured: false },
+        {
+          role: "assistant",
+          isStructured: true,
+          isSurahView: true,
+          summary: summaryText,
+          verses: verses,
+          hadiths: data.retrieved_hadiths || [],
+        },
+      ]);
+    } catch (error) {
+      console.error("Error fetching Surah:", error);
+      
+      // CHANGE 3: Overwrite state with error response replacing old messages
+      setMessages([
+        { role: "user", content: userPromptText, isStructured: false },
+        {
+          role: "assistant",
+          isStructured: false,
+          content: `Error fetching Surah ${selectedSurahNum} from server on port 8000.`,
+        },
+      ]);
+    } finally {
+      setLoading(false);
+      setSelectedSurah("all");
+    }
+  };
+  
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       handleSend();
@@ -505,7 +592,7 @@ function QuranSearchApp() {
       <div className="app-header">
         <div className="header-actions" style={{ display: "flex", alignItems: "center", gap: "15px", flexWrap: "wrap" }}>
           {/* SURAH DROPDOWN */}
-          {language === "english" && (
+          {(
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <span className="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "600" }}>
                 {SURAH_LABELS[language] || "Surah"}:
@@ -766,6 +853,7 @@ function QuranSearchApp() {
                                 text={verse.translation}
                                 language={language}
                                 selectedLangObj={selectedLangObj}
+                                disableTranslation={msg.isSurahView}
                               />
                             </div>
                           )}
@@ -774,7 +862,7 @@ function QuranSearchApp() {
                     </div>
                   )}
 
-                  {/* Hadith References Section - Requirement 2: Translate Hadiths */}
+                  {/* Hadith References Section */}
                   {msg.hadiths && msg.hadiths.length > 0 && (
                     <div style={{ marginTop: "20px" }}>
                       <div className="verses-section-header">
@@ -787,10 +875,10 @@ function QuranSearchApp() {
                           className="verse-card"
                           style={{ borderLeft: "4px solid #10b981" }}
                         >
-                          <div className="verse-badge-container">                                                         
+                          <div className="verse-badge-container">
                             <span className="verse-badge" style={{ background: "#065f46" }}>
-                                <span>{hadith.collection} •  #{hadith.hadith_number}</span>
-                            </span>                                                                                                                  
+                              <span>{hadith.collection} •  #{hadith.hadith_number}</span>
+                            </span>
                           </div>
 
                           <div className="english-translation" style={{ marginTop: "8px" }}>
@@ -799,6 +887,7 @@ function QuranSearchApp() {
                               text={hadith.text}
                               language={language}
                               selectedLangObj={selectedLangObj}
+                              disableTranslation={msg.isSurahView}
                             />
                           </div>
                         </div>
