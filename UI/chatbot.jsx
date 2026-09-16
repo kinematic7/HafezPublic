@@ -21,7 +21,8 @@ import {
   AYAH_LABELS,
   RETRIEVED_QURANIC_REFERENCES_LABELS,
   ASSISTANT_LABELS,
-  YOU_LABELS
+  YOU_LABELS,
+  RETRIEVED_SAHIH_HADITH_REFERENCES_LABELS,
 } from "./libs/translations.js";
 
 const { useState, useEffect, useLayoutEffect, useRef, useMemo, useCallback } = React;
@@ -431,9 +432,9 @@ function QuranSearchApp() {
     if (surahObj) {
       const simulatedQuery = `[Surah ${surahObj.name_en}]`;
       // do nothing for now
-      // handleSend(simulatedQuery);
+      handleSend(simulatedQuery);
     }
-    //setSelectedSurah("all");
+    setSelectedSurah("all");
   };
 
   const handleKeyDown = (e) => {
@@ -504,36 +505,38 @@ function QuranSearchApp() {
       <div className="app-header">
         <div className="header-actions" style={{ display: "flex", alignItems: "center", gap: "15px", flexWrap: "wrap" }}>
           {/* SURAH DROPDOWN */}
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span className="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "600" }}>
-              {SURAH_LABELS[language] || "Surah"}:
-            </span>
-            <select
-              value={selectedSurah}
-              onChange={handleSurahSelect}
-              disabled={loading}
-              aria-label="Select Surah"
-              style={{
-                padding: "6px 10px",
-                borderRadius: "6px",
-                border: "1px solid rgba(16, 185, 129, 0.4)",
-                background: "rgba(0, 0, 0, 0.2)",
-                color: "inherit",
-                fontSize: "12px",
-                fontWeight: "600",
-                cursor: "pointer"
-              }}
-            >
-              <option value="all" style={{ background: "#1f2937", color: "#fff" }}>
-                All Surahs
-              </option>
-              {SURAHS.map((surah) => (
-                <option key={surah.id} value={surah.id} style={{ background: "#1f2937", color: "#fff" }}>
-                  {surah.id}. {surah.name_en} ({surah.name_ar})
+          {language === "english" && (
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span className="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "600" }}>
+                {SURAH_LABELS[language] || "Surah"}:
+              </span>
+              <select
+                value={selectedSurah}
+                onChange={handleSurahSelect}
+                disabled={loading}
+                aria-label="Select Surah"
+                style={{
+                  padding: "6px 10px",
+                  borderRadius: "6px",
+                  border: "1px solid rgba(16, 185, 129, 0.4)",
+                  background: "rgba(0, 0, 0, 0.2)",
+                  color: "inherit",
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  cursor: "pointer"
+                }}
+              >
+                <option value="all" style={{ background: "#1f2937", color: "#fff" }}>
+                  All Surahs
                 </option>
-              ))}
-            </select>
-          </div>
+                {SURAHS.map((surah) => (
+                  <option key={surah.id} value={surah.id} style={{ background: "#1f2937", color: "#fff" }}>
+                    {surah.id}. {surah.name_en} ({surah.name_ar})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* LANGUAGE DROPDOWN */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -775,7 +778,7 @@ function QuranSearchApp() {
                   {msg.hadiths && msg.hadiths.length > 0 && (
                     <div style={{ marginTop: "20px" }}>
                       <div className="verses-section-header">
-                        <span>Retrieved Sahih Hadith References</span>
+                        <span>{RETRIEVED_SAHIH_HADITH_REFERENCES_LABELS[language] || "Retrieved Sahih Hadith References"}</span>
                       </div>
 
                       {msg.hadiths.map((hadith, hIdx) => (
@@ -784,10 +787,10 @@ function QuranSearchApp() {
                           className="verse-card"
                           style={{ borderLeft: "4px solid #10b981" }}
                         >
-                          <div className="verse-badge-container">
+                          <div className="verse-badge-container">                                                         
                             <span className="verse-badge" style={{ background: "#065f46" }}>
-                              {hadith.collection} • Hadith #{hadith.hadith_number}
-                            </span>
+                                <span>{hadith.collection} •  #{hadith.hadith_number}</span>
+                            </span>                                                                                                                  
                           </div>
 
                           <div className="english-translation" style={{ marginTop: "8px" }}>
