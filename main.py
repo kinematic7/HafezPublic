@@ -726,7 +726,7 @@ def surah_endpoint(request: SurahRequest):
         "retrieved_translations": translations,
         "retrieved_transliterations": transliterations,
         "retrieved_arabic": arabics,
-        "chatbot_response": f"Directly retrieved Surah {surah_num}.",
+        "chatbot_response": f"",
     }
 
 

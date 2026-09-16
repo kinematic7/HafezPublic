@@ -104,7 +104,7 @@ export const TRANSLATION_NOTES = {
   afrikaans: "Nota: Hierdie vertaling is deur KI gegenereer en is dalk nie heeltemal akkuraat nie.",
   albanian: "Shënim: Ky përkthim është gjeneruar nga AI dhe mund të mos jetë plotësisht i saktë.",
   amharic: "ማስታወሻ፡ ይህ ትርጉም በAI የተፈጠረ ነው እና ሙሉ በሙሉ ትክክለኛ ላይሆን ይችላል።",
-  arabic: "ملاحظة: هذه الترجمة تم إنشاؤها بواسطة الذكاء الاصطناعي وقد لا تكون دقيقة تمامًا.",
+  arabic: "",
   armenian: "Նշում. Այս թարգմանությունը ստեղծվել է արհեստական բանականության կողմից և կարող է լիովին ճշգրիտ չլինել:",
   assamese: "টোকা: এই অনুবাদটো AI ৰ দ্বাৰা প্ৰস্তুত কৰা হৈছে আৰু ই সম্পূৰ্ণৰূপে ସଠীক নহ'বও পাৰে।",
   azerbaijani: "Qeyd: Bu tərcümə AI tərəfindən yaradılmışdır və tamamilə dəqiq almaya bilər.",
