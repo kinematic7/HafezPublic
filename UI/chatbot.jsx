@@ -1,6 +1,12 @@
 // App.js
 import { LANGUAGES } from "./libs/languages.js";
-import { SURAHS } from "./libs/surahs.js";
+
+import { 
+  SURAHS,
+  SURAHS_BANGLA
+
+} from "./libs/surahs.js";
+
 import {
   PLACEHOLDER_TEXTS,
   TRANSLATION_NOTES,
@@ -23,6 +29,7 @@ import {
   ASSISTANT_LABELS,
   YOU_LABELS,
   RETRIEVED_SAHIH_HADITH_REFERENCES_LABELS,
+  TRANSLATION_LABELS,
 } from "./libs/translations.js";
 
 const { useState, useEffect, useLayoutEffect, useRef, useMemo, useCallback } = React;
@@ -210,6 +217,8 @@ function QuranSearchApp() {
   const [theme, setTheme] = useState("dark");
   const [sourceType, setSourceType] = useState("both"); // 'both' | 'quran' | 'hadith'
   const [language, setLanguage] = useState("english");
+  const activeSurahs = (language === "bangla" || language === "bn") ? SURAHS_BANGLA : SURAHS;
+
   const [selectedSurah, setSelectedSurah] = useState("all");
 
   const [showArabic, setShowArabic] = useState(true);
@@ -490,9 +499,15 @@ function QuranSearchApp() {
       });
 
       const note = TRANSLATION_NOTES[language] || "";
-      const summaryText = data.chatbot_response
+ 
+      const surahName = (language === "bangla" || language === "bn")
+        ? (SURAHS_BANGLA[surahObj?.id]?.name_bn || SURAHS_BANGLA.find?.(s => s.id === surahObj?.id)?.name_bn || surahObj?.name_en)
+        : surahObj?.name_en;
+
+      const summaryText = data?.chatbot_response
         ? `${data.chatbot_response}\n\n${note}`
-        : `Surah ${surahObj.name_en} (${surahObj.name_ar}) - Full Chapter View`;
+        : `${SURAH_LABELS[language] || SURAH_LABELS.english || "Surah"} ${(language === "bangla" || language === "bn") ? (SURAHS_BANGLA[surahObj?.id]?.name_bn || SURAHS_BANGLA.find?.(s => s.id === surahObj?.id)?.name_bn || surahObj?.name_en) : surahObj?.name_en} (${surahObj?.name_ar}) `;
+            
 
       // CHANGE 2: Replace state with exact 2-item array (User Prompt + Assistant Response)
       setMessages([
@@ -589,42 +604,8 @@ function QuranSearchApp() {
       </div>
 
       {/* HEADER */}
-      <div className="app-header">
-        <div className="header-actions" style={{ display: "flex", alignItems: "center", gap: "15px", flexWrap: "wrap" }}>
-          {/* SURAH DROPDOWN */}
-          {(
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <span className="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "600" }}>
-                {SURAH_LABELS[language] || "Surah"}:
-              </span>
-              <select
-                value={selectedSurah}
-                onChange={handleSurahSelect}
-                disabled={loading}
-                aria-label="Select Surah"
-                style={{
-                  padding: "6px 10px",
-                  borderRadius: "6px",
-                  border: "1px solid rgba(16, 185, 129, 0.4)",
-                  background: "rgba(0, 0, 0, 0.2)",
-                  color: "inherit",
-                  fontSize: "12px",
-                  fontWeight: "600",
-                  cursor: "pointer"
-                }}
-              >
-                <option value="all" style={{ background: "#1f2937", color: "#fff" }}>
-                  All Surahs
-                </option>
-                {SURAHS.map((surah) => (
-                  <option key={surah.id} value={surah.id} style={{ background: "#1f2937", color: "#fff" }}>
-                    {surah.id}. {surah.name_en} ({surah.name_ar})
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
+<div className="app-header">
+  <div className="header-actions" style={{ display: "flex", alignItems: "center", gap: "15px", flexWrap: "wrap" }}>
           {/* LANGUAGE DROPDOWN */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <span className="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "600" }}>
@@ -653,6 +634,40 @@ function QuranSearchApp() {
             </select>
           </div>
 
+          {/* SURAH DROPDOWN */}
+          {(
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span className="hide-on-mobile" style={{ fontSize: "12px", fontWeight: "600" }}>
+                {SURAH_LABELS[language] || "Surah"}:
+              </span>
+             <select
+                value={selectedSurah}
+                onChange={handleSurahSelect}
+                disabled={loading}
+                aria-label="Select Surah"
+                style={{
+                  padding: "6px 10px",
+                  borderRadius: "6px",
+                  border: "1px solid rgba(16, 185, 129, 0.4)",
+                  background: "rgba(0, 0, 0, 0.2)",
+                  color: "inherit",
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  cursor: "pointer"
+                }}
+              >
+                <option value="all" style={{ background: "#1f2937", color: "#fff" }}>
+                  {language === "bangla" || language === "bn" ? "সকল সূরা" : "All Surahs"}
+                </option>
+                {activeSurahs.map((surah) => (
+                  <option key={surah.id} value={surah.id} style={{ background: "#1f2937", color: "#fff" }}>
+                    {surah.id}. {surah.name_bn || surah.name_en} ({surah.name_ar})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}       
+
           {/* DISPLAY CONTROLS */}
           <div className="display-controls hide-on-mobile">
             <label className="switch-control">
@@ -662,6 +677,14 @@ function QuranSearchApp() {
                 onChange={(e) => setShowArabic(e.target.checked)}
               />
               <span>{ARABIC_LABELS[language] || "Arabic"}</span>
+            </label>
+            <label className="switch-control">
+                  <input
+                    type="checkbox"
+                    checked={showTranslation}
+                    onChange={(e) => setShowTranslation(e.target.checked)}
+                  />
+                  <span>{TRANSLATION_LABELS[language] || "Translation"}</span>
             </label>
 
             {language === "english" && (
@@ -675,14 +698,7 @@ function QuranSearchApp() {
                   <span>Transliteration</span>
                 </label>
 
-                <label className="switch-control">
-                  <input
-                    type="checkbox"
-                    checked={showTranslation}
-                    onChange={(e) => setShowTranslation(e.target.checked)}
-                  />
-                  <span>Translation</span>
-                </label>
+               
               </>
             )}
           </div>
@@ -846,7 +862,7 @@ function QuranSearchApp() {
                           )}
 
                           {/* Skip translation rendering if Arabic is selected */}
-                          {!isArabicSelected && (language !== "english" || showTranslation) && verse.translation && (
+                          {!isArabicSelected && showTranslation && verse.translation && (
                             <div className="verse-translation-text">
                               <TranslatedVerse
                                 key={`${verse.surah}-${verse.verse}-${language}`}
