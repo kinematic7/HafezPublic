@@ -1,5 +1,6 @@
 // languages.js
 export const LANGUAGES = [
+  { code: "arabic", name: "Arabic (العربية)" },
   { code: "bangla", name: "Bengali / Bangla (বাংলা)" },
   { code: "english", name: "English" },
 ];

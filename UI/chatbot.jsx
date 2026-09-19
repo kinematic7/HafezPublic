@@ -669,6 +669,7 @@ function QuranSearchApp() {
           )}       
 
           {/* DISPLAY CONTROLS */}
+          {(!isArabicSelected &&  
           <div className="display-controls hide-on-mobile">
             <label className="switch-control">
               <input
@@ -702,6 +703,7 @@ function QuranSearchApp() {
               </>
             )}
           </div>
+        )}
 
           {/* THEME SWITCH WRAPPER */}
           <div className="theme-switch-wrapper">
@@ -855,7 +857,7 @@ function QuranSearchApp() {
                             <div className="arabic-text">{verse.arabic}</div>
                           )}
 
-                          {showTransliteration && verse.transliteration && (
+                          {!isArabicSelected && showTransliteration && verse.transliteration && (
                             <div className="transliteration-text">
                               {verse.transliteration}
                             </div>
