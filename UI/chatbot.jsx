@@ -218,6 +218,10 @@ function QuranSearchApp() {
   const [theme, setTheme] = useState("dark");
   const [sourceType, setSourceType] = useState("both"); // 'both' | 'quran' | 'hadith'
   const [language, setLanguage] = useState("english");
+  useEffect(() => {
+    setSelectedSurah("all");
+  }, [language]);
+
   const activeSurahs = (language === "bangla" || language === "bn") ? SURAHS_BANGLA : SURAHS;
 
   const [selectedSurah, setSelectedSurah] = useState("all");
@@ -315,6 +319,7 @@ function QuranSearchApp() {
   }, []);
 
   const handleSend = async (overrideQuery = null) => {
+    setSelectedSurah("all");
     let queryToSend = overrideQuery || query;
     if (!queryToSend.trim() || loading) return;
 
@@ -435,8 +440,12 @@ function QuranSearchApp() {
     }
   };
 
- const handleSurahSelect = async (e) => {
+  const handleSurahSelect = async (e) => {
     const value = e.target.value;
+    
+    // 1. UPDATE STATE IMMEDIATELY so the dropdown retains the user's selection
+    setSelectedSurah(value);
+
     if (value === "all" || loading) return;
 
     const surahObj = SURAHS.find((s) => String(s.id) === value);
@@ -449,7 +458,6 @@ function QuranSearchApp() {
 
     const userPromptText = `[Surah ${selectedSurahNum}: ${surahObj.name_en}]`;
     
-    // CHANGE 1: Overwrite messages array completely instead of using prev state
     setMessages([{ role: "user", content: userPromptText, isStructured: false }]);
 
     try {
@@ -470,7 +478,6 @@ function QuranSearchApp() {
 
       const data = await response.json();
 
-      // 1. Build Arabic Map with String Key Normalization and Key Fallbacks
       const arabicMap = new Map();
       (data.retrieved_arabic || []).forEach((item) => {
         const key = `${String(item.surah)}:${String(item.verse)}`;
@@ -478,7 +485,6 @@ function QuranSearchApp() {
         arabicMap.set(key, arabicText);
       });
 
-      // 2. Build Transliteration Map with String Key Normalization and Key Fallbacks
       const transliterationMap = new Map();
       (data.retrieved_transliterations || []).forEach((item) => {
         const key = `${String(item.surah)}:${String(item.verse)}`;
@@ -486,7 +492,6 @@ function QuranSearchApp() {
         transliterationMap.set(key, transliterationText);
       });
 
-      // 3. Map into unified Verse structures
       const verses = (data.retrieved_translations || []).map((translationObj) => {
         const key = `${String(translationObj.surah)}:${String(translationObj.verse)}`;
 
@@ -500,17 +505,11 @@ function QuranSearchApp() {
       });
 
       const note = TRANSLATION_NOTES[language] || "";
- 
-      const surahName = (language === "bangla" || language === "bn")
-        ? (SURAHS_BANGLA[surahObj?.id]?.name_bn || SURAHS_BANGLA.find?.(s => s.id === surahObj?.id)?.name_bn || surahObj?.name_en)
-        : surahObj?.name_en;
 
       const summaryText = data?.chatbot_response
         ? `${data.chatbot_response}\n\n${note}`
         : `${SURAH_LABELS[language] || SURAH_LABELS.english || "Surah"} ${(language === "bangla" || language === "bn") ? (SURAHS_BANGLA[surahObj?.id - 1]?.name_bn || SURAHS_BANGLA.find?.(s => s.id === surahObj?.id)?.name_bn || surahObj?.name_en) : surahObj?.name_en} (${surahObj?.name_ar}) `;
-            
 
-      // CHANGE 2: Replace state with exact 2-item array (User Prompt + Assistant Response)
       setMessages([
         { role: "user", content: userPromptText, isStructured: false },
         {
@@ -525,7 +524,6 @@ function QuranSearchApp() {
     } catch (error) {
       console.error("Error fetching Surah:", error);
       
-      // CHANGE 3: Overwrite state with error response replacing old messages
       setMessages([
         { role: "user", content: userPromptText, isStructured: false },
         {
@@ -536,7 +534,6 @@ function QuranSearchApp() {
       ]);
     } finally {
       setLoading(false);
-      setSelectedSurah("all");
     }
   };
   
