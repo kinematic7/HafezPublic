@@ -858,7 +858,7 @@ function QuranSearchApp() {
                             <div className="arabic-text">{verse.arabic}</div>
                           )}
 
-                          {!isArabicSelected && showTransliteration && verse.transliteration && (
+                          {!isArabicSelected && showTransliteration && verse.transliteration && verse.transliteration!="Transliteration not available" && (
                             <div className="transliteration-text">
                               {verse.transliteration}
                             </div>
