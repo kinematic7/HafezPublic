@@ -30,6 +30,7 @@ import {
   YOU_LABELS,
   RETRIEVED_SAHIH_HADITH_REFERENCES_LABELS,
   TRANSLATION_LABELS,
+  TRANSLITERATION_LABELS,
 } from "./libs/translations.js";
 
 const { useState, useEffect, useLayoutEffect, useRef, useMemo, useCallback } = React;
@@ -696,7 +697,7 @@ function QuranSearchApp() {
                     checked={showTransliteration}
                     onChange={(e) => setShowTransliteration(e.target.checked)}
                   />
-                  <span>Transliteration</span>
+                  <span>{TRANSLITERATION_LABELS[language] || "Transliteration"}</span>
                 </label>
 
                
