@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import re
 from typing import Any, Dict, List, Optional, Tuple
+
 from chatbot import ChatBot
 from fastapi import BackgroundTasks, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,7 +15,10 @@ from surahlist import SURAH_NAMES
 
 
 # --- In-Memory Hash Maps ---
-TRANSLITERATION_MAP: Dict[Tuple[int, int], str] = {}
+TRANSLITERATION_MAPS: Dict[str, Dict[Tuple[int, int], str]] = {
+    "english": {},
+    "bangla": {},
+}
 ARABIC_MAP: Dict[Tuple[int, int], str] = {}
 
 TRANSLATION_MAPS: Dict[str, Dict[Tuple[int, int], str]] = {
@@ -29,11 +33,11 @@ DATA_DIR = BASE_DIR / "Data"
 def load_json_dataset(
     file_paths: List[str], target_map: Dict[Tuple[int, int], str], label: str
 ):
-    """Helper to load dataset JSON files into a (chapter, verse) hash map."""
     file_found = False
     for path in file_paths:
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            # Change "utf-8" to "utf-8-sig" here
+            with open(path, "r", encoding="utf-8-sig") as f:
                 data = json.load(f)
                 items = data.get(
                     "quran_data", data if isinstance(data, list) else []
@@ -56,7 +60,6 @@ def load_json_dataset(
             " lookups will return default notices."
         )
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Modern lifespan handler replacing deprecated on_event startup logic."""
@@ -65,8 +68,8 @@ async def lifespan(app: FastAPI):
             str(DATA_DIR / "transliteration.json"),
             str(DATA_DIR / "quran_transliteration.json"),
         ],
-        TRANSLITERATION_MAP,
-        "transliteration",
+        TRANSLITERATION_MAPS["english"],
+        "English transliteration",
     )
     load_json_dataset(
         [
@@ -87,11 +90,17 @@ async def lifespan(app: FastAPI):
     )
     load_json_dataset(
         [
-            str(DATA_DIR / "quran_bangla.json"),
-            str(DATA_DIR / "bangla.json"),
+            str(DATA_DIR / "bangla_translation.json"),
         ],
         TRANSLATION_MAPS["bangla"],
-        "Bangla translation",
+        "Bangla translation",    
+    )
+    load_json_dataset(
+        [
+            str(DATA_DIR / "bangla_transliteration.json"),
+        ],
+        TRANSLITERATION_MAPS["bangla"],
+        "Bangla transliteration",
     )
     yield
 
@@ -124,10 +133,13 @@ chatbot = ChatBot()
 def fetch_entire_surah(
     surah_num: int,
     translation_map: Optional[Dict[Tuple[int, int], str]] = None,
+    transliteration_map: Optional[Dict[Tuple[int, int], str]] = None,
 ) -> Tuple[List[dict], List[dict], List[dict]]:
     """Extracts all verses for a given Surah across translation, transliteration, and Arabic maps."""
     if translation_map is None:
         translation_map = TRANSLATION_MAPS["english"]
+    if transliteration_map is None:
+        transliteration_map = TRANSLITERATION_MAPS["english"]
 
     translations, transliterations, arabics = [], [], []
     verse_num = 1
@@ -136,7 +148,7 @@ def fetch_entire_surah(
         key = (surah_num, verse_num)
 
         in_trans = key in translation_map
-        in_lit = key in TRANSLITERATION_MAP
+        in_lit = key in transliteration_map
         in_arabic = key in ARABIC_MAP
 
         if not (in_trans or in_lit or in_arabic):
@@ -156,7 +168,7 @@ def fetch_entire_surah(
             {
                 "surah": surah_num,
                 "verse": verse_num,
-                "transliteration": TRANSLITERATION_MAP.get(
+                "transliteration": transliteration_map.get(
                     key, "Transliteration not available"
                 ),
             }
@@ -282,7 +294,7 @@ class SurahRequest(BaseModel):
         default="all",
         description=(
             "Language filter (e.g., 'english', 'arabic', 'transliteration',"
-            " 'all')."
+            " 'bangla', 'all')."
         ),
     )
 
@@ -343,9 +355,14 @@ def surah_endpoint(request: SurahRequest):
     target_translation_map = TRANSLATION_MAPS.get(
         requested_language, TRANSLATION_MAPS["english"]
     )
+    target_transliteration_map = TRANSLITERATION_MAPS.get(
+        requested_language, TRANSLITERATION_MAPS["english"]
+    )
 
     translations, transliterations, arabics = fetch_entire_surah(
-        surah_num, translation_map=target_translation_map
+        surah_num,
+        translation_map=target_translation_map,
+        transliteration_map=target_transliteration_map,
     )
 
     if not translations and not arabics and not transliterations:
@@ -597,7 +614,9 @@ def query_and_chat_endpoint(request: QueryRequest):
     if surah_request and request.source_type in ["quran", "both"]:
         surah_num, mode = surah_request
         translations, transliterations, arabics = fetch_entire_surah(
-            surah_num, translation_map=TRANSLATION_MAPS["english"]
+            surah_num,
+            translation_map=TRANSLATION_MAPS["english"],
+            transliteration_map=TRANSLITERATION_MAPS["english"],
         )
 
         if translations:
@@ -672,6 +691,9 @@ def query_and_chat_endpoint(request: QueryRequest):
     retrieved_transliterations = []
     retrieved_arabic = []
 
+    # Default to English transliterations for vector search results
+    default_lit_map = TRANSLITERATION_MAPS["english"]
+
     for doc in quran_docs:
         parsed = parse_surah_verse(doc)
         if parsed:
@@ -684,7 +706,7 @@ def query_and_chat_endpoint(request: QueryRequest):
                 {
                     "surah": surah,
                     "verse": verse,
-                    "transliteration": TRANSLITERATION_MAP.get(
+                    "transliteration": default_lit_map.get(
                         (surah, verse), "Transliteration not found"
                     ),
                 }

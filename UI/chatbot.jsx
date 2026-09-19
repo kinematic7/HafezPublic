@@ -506,7 +506,7 @@ function QuranSearchApp() {
 
       const summaryText = data?.chatbot_response
         ? `${data.chatbot_response}\n\n${note}`
-        : `${SURAH_LABELS[language] || SURAH_LABELS.english || "Surah"} ${(language === "bangla" || language === "bn") ? (SURAHS_BANGLA[surahObj?.id]?.name_bn || SURAHS_BANGLA.find?.(s => s.id === surahObj?.id)?.name_bn || surahObj?.name_en) : surahObj?.name_en} (${surahObj?.name_ar}) `;
+        : `${SURAH_LABELS[language] || SURAH_LABELS.english || "Surah"} ${(language === "bangla" || language === "bn") ? (SURAHS_BANGLA[surahObj?.id - 1]?.name_bn || SURAHS_BANGLA.find?.(s => s.id === surahObj?.id)?.name_bn || surahObj?.name_en) : surahObj?.name_en} (${surahObj?.name_ar}) `;
             
 
       // CHANGE 2: Replace state with exact 2-item array (User Prompt + Assistant Response)
@@ -687,7 +687,7 @@ function QuranSearchApp() {
                   <span>{TRANSLATION_LABELS[language] || "Translation"}</span>
             </label>
 
-            {language === "english" && (
+            {(
               <>
                 <label className="switch-control">
                   <input
@@ -855,7 +855,7 @@ function QuranSearchApp() {
                             <div className="arabic-text">{verse.arabic}</div>
                           )}
 
-                          {language === "english" && showTransliteration && verse.transliteration && (
+                          {showTransliteration && verse.transliteration && (
                             <div className="transliteration-text">
                               {verse.transliteration}
                             </div>
