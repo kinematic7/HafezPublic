@@ -34,6 +34,8 @@ import {
   TRANSLITERATION_LABELS,
 } from "./libs/translations.js";
 
+const serverBaseUrl = "http://localhost:8000"; 
+
 const { useState, useEffect, useLayoutEffect, useRef, useMemo, useCallback } = React;
 // Standalone Helper: Translate content from English via Backend API
 async function translateFromEnglish(sourceText, languageCode, selectedLangObj) {
@@ -50,7 +52,7 @@ async function translateFromEnglish(sourceText, languageCode, selectedLangObj) {
   const targetLanguageName = selectedLangObj?.name || languageCode;
 
   try {
-    const response = await fetch("http://localhost:8000/translate-from-english", {
+    const response = await fetch(`${serverBaseUrl}/translate-from-english`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -122,7 +124,7 @@ const TranslatedVerse = ({
       setError(null);
 
       try {
-        const response = await fetch('http://localhost:8000/translate-verse', {
+        const response = await fetch(`${serverBaseUrl}/translate-verse`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -191,7 +193,7 @@ const TranslatedTransliteration = ({
       setError(null);
 
       try {
-        const response = await fetch('http://localhost:8000/transliterate-verse', {
+        const response = await fetch(`${serverBaseUrl}/transliterate-verse`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -369,7 +371,7 @@ function QuranSearchApp() {
 
     const targetLanguageName = langObj?.name || langCode;
 
-    const response = await fetch("http://localhost:8000/translate", {
+    const response = await fetch(`${serverBaseUrl}/translate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -416,7 +418,7 @@ function QuranSearchApp() {
     const finalPayloadQuery = currentQuery + languageInstruction;
 
     try {
-      const response = await fetch("http://localhost:8000/query", {
+      const response = await fetch(`${serverBaseUrl}/query`, {
         method: "POST",
         headers: {
           accept: "application/json",
@@ -532,7 +534,7 @@ function QuranSearchApp() {
     setMessages([{ role: "user", content: userPromptText, isStructured: false }]);
 
     try {
-      const response = await fetch("http://localhost:8000/surah", {
+      const response = await fetch(`${serverBaseUrl}/surah`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
