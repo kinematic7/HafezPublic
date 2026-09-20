@@ -32,6 +32,8 @@ import {
   RETRIEVED_SAHIH_HADITH_REFERENCES_LABELS,
   TRANSLATION_LABELS,
   TRANSLITERATION_LABELS,
+  BUKHARI_LABELS,
+  MUSLIM_LABELS
 } from "./libs/translations.js";
 
 const serverBaseUrl = "http://localhost:8000"; 
@@ -282,6 +284,14 @@ function TranslatedHadith({ text, language, selectedLangObj, disableTranslation 
 
   return renderFormattedText(displayText);
 }
+
+const getCollectionName = (collection, lang) => {
+  if (!collection) return "";
+  const isBukhari = collection.toLowerCase().includes("bukhari");
+  const dict = isBukhari ? BUKHARI_LABELS : MUSLIM_LABELS;
+  
+  return dict[lang] || collection; // Falls back to original text if language key is missing
+};
 
 function QuranSearchApp() {
   const [query, setQuery] = useState("");
@@ -974,18 +984,19 @@ function QuranSearchApp() {
                         >
                           <div className="verse-badge-container">
                             <span className="verse-badge" style={{ background: "#065f46" }}>
-                              <span>{hadith.collection} •  #{hadith.hadith_number}</span>
-                            </span>
+                              <span>
+                                {getCollectionName(hadith.collection, language)} • #{hadith.hadith_number}
+                              </span>
+                            </span>                           
                           </div>
 
                           <div className="english-translation" style={{ marginTop: "8px" }}>
-                            {/* Fix applied: Changed disableTranslation to respect the toggle */}
                             <TranslatedHadith
                               key={`hadith-${hIdx}-${language}`}
                               text={hadith.text}
                               language={language}
                               selectedLangObj={selectedLangObj}
-                              disableTranslation={!showTranslation}
+                              disableTranslation={false} // always show translation for hadiths
                             />
                           </div>
                         </div>
