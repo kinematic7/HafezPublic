@@ -682,8 +682,10 @@ function QuranSearchApp() {
               </button>
             );
           })}
-        </div>
-        <FlagList setLanguage={setLanguage} />
+        </div>    
+        <span className="hide-on-mobile">
+          <FlagList setLanguage={setLanguage} />
+        </span>    
       </div>
 
       {/* HEADER */}
@@ -1027,6 +1029,7 @@ function QuranSearchApp() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
+          dir={(language === 'arabic' || language === 'persian' || language === 'urdu') ? 'rtl' : 'ltr'}
           placeholder={
             PLACEHOLDER_TEXTS[language] || "Ask about verses, hadiths, or themes..."
           }

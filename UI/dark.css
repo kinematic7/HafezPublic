@@ -45,11 +45,12 @@ body {
   justify-content: center;
   align-items: center;
   padding: 12px;
+  overflow-x: auto; /* Ensures smooth horizontal scrollbar if desktop window < 1400px */
 }
 
 .app-container {
   width: 100%;
-  max-width: 1050px;
+  max-width: 980px; /* Expanded max width for large desktop screens */
   height: 95vh;
   height: 95dvh;
   background: var(--panel-bg);
@@ -59,6 +60,13 @@ body {
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--border-color);
+}
+
+/* Enforce desktop target width when screen space permits */
+@media (min-width: 769px) {
+  .app-container {
+    min-width: 980px;
+  }
 }
 
 .app-header {
@@ -285,30 +293,65 @@ body {
   text-align: center;
   color: var(--text-muted);
   margin: auto;
-  padding: 24px;
-  background: var(--panel-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  max-width: 360px;
-  box-shadow: var(--shadow-sm);
+  padding: 2.5rem 2rem;
+  background: rgba(255, 255, 255, 0.03); /* Subtle backdrop */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  max-width: 520px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(8px);
+}
+
+.empty-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 1.25rem;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.1); /* Subtle gold tint */
 }
 
 .empty-icon {
-  font-size: 28px;
-  margin-bottom: 10px;
+  font-size: 1.5rem;
 }
 
-.empty-state-card h3 {
-  font-size: 15px;
+.bismillah-text {
+  font-family: "Amiri", "Traditional Arabic", "Scheherazade New", serif;
+  font-size: 1.85rem;
+  font-weight: 500;
+  line-height: 1.8;
+  color: #4caf50; /* Warm gold accent */
+  margin: 0;
+}
+
+.divider {
+  width: 40px;
+  height: 2px;
+  background: rgba(212, 175, 55, 0.3);
+  margin: 1.25rem auto;
+  border-radius: 2px;
+}
+
+.welcome-text {
+  font-size: 0.95rem;
+  font-style: italic;
+  color: #8a8d91;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.5;
+}
+
+.subtitle-text {
+  font-size: 1.05rem;
+  color: #e1e3e6;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.subtitle-text strong {
+  color: #ffffff;
   font-weight: 600;
-  color: var(--text-main);
-  margin-bottom: 4px;
-}
-
-.empty-state-card p {
-  font-size: 12px;
-  line-height: 1.4;
-  color: var(--text-muted);
 }
 
 .message-bubble {
@@ -526,6 +569,19 @@ body {
   cursor: not-allowed;
 }
 
+.flags {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.flag {
+  width: 30px;
+  height: 20px;
+  object-fit: fill;
+  display: block;
+}
+
 /* Mobile responsive adjustments */
 @media (max-width: 768px) {
   body {
@@ -536,6 +592,8 @@ body {
   .app-container {
     height: 100vh;
     height: 100dvh;
+    min-width: 0 !important;
+    max-width: 100% !important;
     border-radius: 0;
     border: none;
   }
@@ -599,14 +657,12 @@ body {
 }
 
 @media (max-width: 767px) {
-  /* Existing mobile-hide helper classes */
   .theme-switch-wrapper,
   .hide-on-mobile,
   .app-subtitle {
     display: none !important;
   }
 
-  /* Optional: Optimize header spacing on mobile screens */
   .app-header {
     flex-direction: column;
     align-items: flex-start;
@@ -617,80 +673,4 @@ body {
     width: 100%;
     justify-content: space-between;
   }
-}
-
-.empty-state-card {
-  max-width: 520px;
-  text-align: center;
-  padding: 2.5rem 2rem;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.03); /* Subtle backdrop */
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(8px);
-}
-
-.empty-icon-wrapper {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  margin-bottom: 1.25rem;
-  border-radius: 50%;
-  background: rgba(212, 175, 55, 0.1); /* Subtle gold tint */
-}
-
-.empty-icon {
-  font-size: 1.5rem;
-}
-
-.bismillah-text {
-  font-family: "Amiri", "Traditional Arabic", "Scheherazade New", serif;
-  font-size: 1.85rem;
-  font-weight: 500;
-  line-height: 1.8;
-  color: #4caf50; /* Warm gold accent */
-  margin: 0;
-}
-
-.divider {
-  width: 40px;
-  height: 2px;
-  background: rgba(212, 175, 55, 0.3);
-  margin: 1.25rem auto;
-  border-radius: 2px;
-}
-
-.welcome-text {
-  font-size: 0.95rem;
-  font-style: italic;
-  color: #8a8d91;
-  margin: 0 0 0.75rem 0;
-  line-height: 1.5;
-}
-
-.subtitle-text {
-  font-size: 1.05rem;
-  color: #e1e3e6;
-  margin: 0;
-  line-height: 1.6;
-}
-
-.subtitle-text strong {
-  color: #ffffff;
-  font-weight: 600;
-}
-
-.flags {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-}
-
-.flag {
-  width: 30px;
-  height: 20px;
-  object-fit: fill;
-  display: block;
 }
