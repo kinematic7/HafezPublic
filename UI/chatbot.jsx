@@ -99,55 +99,74 @@ function renderFormattedText(text) {
   });
 }
 
-function TranslatedVerse({ text, language, selectedLangObj, disableTranslation }) {
-  const [displayText, setDisplayText] = useState(text);
-  const [translating, setTranslating] = useState(false);
+const TranslatedVerse = ({ 
+  chapter, 
+  verse, 
+  language, 
+  selectedLangObj, 
+  disableTranslation 
+}) => {
+  const [translatedText, setTranslatedText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    let isMounted = true;
+    const fetchTranslation = async () => {
+      // 1. Skip if required props are missing
+      if (!chapter || !verse || !language) return;
+      
+      // 2. Respect the disableTranslation flag (e.g., Arabic-only Surah view)
+      if (disableTranslation) return;
 
-    const isEnglish =
-      !language ||
-      language.toLowerCase() === "english" ||
-      language.toLowerCase() === "en";
+      setIsLoading(true);
+      setError(null);
 
-    const isArabic =
-      language.toLowerCase() === "arabic" ||
-      language.toLowerCase() === "ar";
-
-    if (disableTranslation || isEnglish || isArabic) {
-      setDisplayText(text);
-      return;
-    }
-
-    const performTranslation = async () => {
-      setTranslating(true);
       try {
-        const result = await translateFromEnglish(text, language, selectedLangObj);
-        if (isMounted) {
-          setDisplayText(result || text);
+        const response = await fetch('http://localhost:8000/translate-verse', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chapter: parseInt(chapter),
+            verse: parseInt(verse),
+            language: language // Or use selectedLangObj.value/name depending on your object structure
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+
+        const data = await response.json();
+        setTranslatedText(data.translated_text);
       } catch (err) {
-        console.error("Verse translation failed:", err);
-        if (isMounted) setDisplayText(text);
+        console.error("Error fetching translation:", err);
+        setError("Failed to load translation.");
       } finally {
-        if (isMounted) setTranslating(false);
+        setIsLoading(false);
       }
     };
 
-    performTranslation();
+    fetchTranslation();
+  }, [chapter, verse, language, disableTranslation]); 
+  // Re-run if they toggle disableTranslation or change the language
 
-    return () => {
-      isMounted = false;
-    };
-  }, [text, language, selectedLangObj, disableTranslation]);
+  // If translation is disabled, render nothing (or you can return original text if you still pass it)
+  if (disableTranslation) return null; 
 
-  if (translating) {
-    return <span style={{ opacity: 0.6, fontStyle: "italic" }}>Translating verse...</span>;
-  }
+  if (isLoading) return <div className="text-gray-500 italic text-sm mt-2">Translating...</div>;
+  if (error) return <div className="text-red-500 text-sm mt-2">{error}</div>;
 
-  return renderFormattedText(displayText);
-}
+  return (
+    <div className="translated-verse-container mt-2">
+      {/* You can also use selectedLangObj here if you need to set RTL/LTR directions! */}
+      <p className="text-lg" dir={selectedLangObj?.isRtl ? "rtl" : "ltr"}>
+        {translatedText}
+      </p>
+    </div>
+  );
+};
 
 function TranslatedHadith({ text, language, selectedLangObj, disableTranslation }) {
   const [displayText, setDisplayText] = useState(text);
@@ -846,16 +865,17 @@ function QuranSearchApp() {
                             </div>
                           )}
 
-                          {/* Skip translation rendering if Arabic is selected */}
-                          {!isArabicSelected && showTranslation && verse.translation && (
+                          {/* Fix applied: Removed the showTranslation boolean block wrapper, mapping disableTranslation to !showTranslation directly */}
+                          {!isArabicSelected && verse.translation && (
                             <div className="verse-translation-text">
-                              <TranslatedVerse
-                                key={`${verse.surah}-${verse.verse}-${language}`}
-                                text={verse.translation}
-                                language={language}
-                                selectedLangObj={selectedLangObj}
-                                disableTranslation={msg.isSurahView}
-                              />
+                           <TranslatedVerse
+                              key={`${verse.surah}-${verse.verse}-${language}`}
+                              chapter={verse.surah}
+                              verse={verse.verse}
+                              language={language}
+                              selectedLangObj={selectedLangObj}
+                              disableTranslation={!showTranslation}
+                          />
                             </div>
                           )}
                         </div>
@@ -883,12 +903,13 @@ function QuranSearchApp() {
                           </div>
 
                           <div className="english-translation" style={{ marginTop: "8px" }}>
+                            {/* Fix applied: Changed disableTranslation to respect the toggle */}
                             <TranslatedHadith
                               key={`hadith-${hIdx}-${language}`}
                               text={hadith.text}
                               language={language}
                               selectedLangObj={selectedLangObj}
-                              disableTranslation={msg.isSurahView}
+                              disableTranslation={!showTranslation}
                             />
                           </div>
                         </div>

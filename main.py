@@ -342,9 +342,44 @@ class TranslationResponse(BaseModel):
     target_language: str
     translated_text: str
 
+class VerseTranslationRequest(BaseModel):
+    chapter: int
+    verse: int
+    language: str
 
 # --- API Endpoints ---
 
+@app.post("/translate-verse")
+async def translate_verse(request: VerseTranslationRequest):
+    try:
+        key = (request.chapter, request.verse)
+        target_lang = request.language.lower().strip()
+
+        # Step 1: Attempt to fetch from loaded JSON in-memory maps
+        target_map = TRANSLATION_MAPS.get(target_lang, {})
+        translated_text = target_map.get(key)
+
+        # Step 2: Fallback to base English translation or dynamically generate translation via ChatBot
+        if not translated_text:
+            base_english = TRANSLATION_MAPS["english"].get(
+                key, f"Chapter {request.chapter}, Verse {request.verse}"
+            )
+            prompt = (
+                f"Translate the following Quranic verse (Surah {request.chapter}, Verse {request.verse}) "
+                f"into {target_lang}. Return ONLY the translation text without commentary:\n\n{base_english}"
+            )
+            translated_text = await asyncio.to_thread(chatbot.ask, prompt)
+            translated_text = translated_text.strip()
+
+        return {
+            "chapter": request.chapter,
+            "verse": request.verse,
+            "language": target_lang,
+            "translated_text": translated_text,
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/surah", tags=["Search Surah Directly"])
 def surah_endpoint(request: SurahRequest):
