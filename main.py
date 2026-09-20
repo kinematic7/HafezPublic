@@ -381,6 +381,38 @@ async def translate_verse(request: VerseTranslationRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/transliterate-verse")
+async def transliterate_verse(request: VerseTranslationRequest):
+    try:
+        key = (request.chapter, request.verse)
+        target_lang = request.language.lower().strip()
+
+        # Step 1: Attempt to fetch from loaded JSON in-memory transliteration maps
+        target_map = TRANSLITERATION_MAPS.get(target_lang, {})
+        transliterated_text = target_map.get(key)
+
+        # Step 2: Fallback to base English transliteration or dynamically generate via ChatBot
+        if not transliterated_text:
+            base_english = TRANSLITERATION_MAPS.get("english", {}).get(
+                key, f"Chapter {request.chapter}, Verse {request.verse}"
+            )
+            prompt = (
+                f"Provide the phonetic transliteration of the following Quranic verse (Surah {request.chapter}, Verse {request.verse}) "
+                f"optimized for readers using {target_lang} script/phonetics. Return ONLY the transliteration text without commentary:\n\n{base_english}"
+            )
+            transliterated_text = await asyncio.to_thread(chatbot.ask, prompt)
+            transliterated_text = transliterated_text.strip()
+
+        return {
+            "chapter": request.chapter,
+            "verse": request.verse,
+            "language": target_lang,
+            "transliterated_text": transliterated_text,
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/surah", tags=["Search Surah Directly"])
 def surah_endpoint(request: SurahRequest):
     surah_num = request.surah_num

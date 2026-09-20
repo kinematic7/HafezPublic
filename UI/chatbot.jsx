@@ -168,6 +168,73 @@ const TranslatedVerse = ({
   );
 };
 
+const TranslatedTransliteration = ({ 
+  chapter, 
+  verse, 
+  language, 
+  selectedLangObj, 
+  disableTranslation 
+}) => {
+  const [transliteratedText, setTransliteratedText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchTransliteration = async () => {
+      // 1. Skip if required props are missing
+      if (!chapter || !verse || !language) return;
+      
+      // 2. Respect the disableTranslation flag (tied to the showTranslation toggle)
+      if (disableTranslation) return;
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch('http://localhost:8000/transliterate-verse', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chapter: parseInt(chapter),
+            verse: parseInt(verse),
+            language: language
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setTransliteratedText(data.transliterated_text);
+      } catch (err) {
+        console.error("Error fetching transliteration:", err);
+        setError("Failed to load transliteration.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTransliteration();
+  }, [chapter, verse, language, disableTranslation]); 
+
+  // If translation/transliteration display is disabled, render nothing
+  if (disableTranslation) return null; 
+
+  if (isLoading) return <div className="text-gray-500 italic text-sm mt-2">Loading transliteration...</div>;
+  if (error) return <div className="text-red-500 text-sm mt-2">{error}</div>;
+
+  return (
+    <div className="translated-transliteration-container mt-2">
+      <p className="text-lg">
+        {transliteratedText}
+      </p>
+    </div>
+  );
+};
+
 function TranslatedHadith({ text, language, selectedLangObj, disableTranslation }) {
   const [displayText, setDisplayText] = useState(text);
   const [translating, setTranslating] = useState(false);
@@ -859,9 +926,16 @@ function QuranSearchApp() {
                             <div className="arabic-text">{verse.arabic}</div>
                           )}
 
-                          {!isArabicSelected && showTransliteration && verse.transliteration && verse.transliteration!="Transliteration not available" && (
+                          {!isArabicSelected && verse.transliteration && (
                             <div className="transliteration-text">
-                              {verse.transliteration}
+                              <TranslatedTransliteration
+                                key={`translit-${verse.surah}-${verse.verse}-${language}`}
+                                chapter={verse.surah}
+                                verse={verse.verse}
+                                language={language}
+                                selectedLangObj={selectedLangObj}
+                                disableTranslation={!showTransliteration}
+                              />
                             </div>
                           )}
 
