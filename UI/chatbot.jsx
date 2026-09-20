@@ -33,7 +33,8 @@ import {
   TRANSLATION_LABELS,
   TRANSLITERATION_LABELS,
   BUKHARI_LABELS,
-  MUSLIM_LABELS
+  MUSLIM_LABELS,
+  FLAGS
 } from "./libs/translations.js";
 
 const serverBaseUrl = "http://localhost:8000"; 
@@ -652,7 +653,7 @@ function QuranSearchApp() {
           className="hide-on-mobile"
           style={{ fontSize: "12px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.5px" }}
         >
-          <span className="title-icon">﷽</span> {APP_TITLES[language] || "Quran & Hadith Insights"}:
+          {/* <span className="title-icon">﷽</span> {APP_TITLES[language] || "Quran & Hadith Insights"}: */}
         </span>
         <div style={{ display: "flex", background: "rgba(0,0,0,0.3)", padding: "4px", borderRadius: "8px", gap: "6px" }}>
           {["both", "quran", "hadith"].map((type) => {
@@ -682,6 +683,7 @@ function QuranSearchApp() {
             );
           })}
         </div>
+        <FlagList setLanguage={setLanguage} />
       </div>
 
       {/* HEADER */}
@@ -1039,6 +1041,24 @@ function QuranSearchApp() {
           {loading ? "..." : "➤"}
         </button>
       </div>
+    </div>
+  );
+}
+
+export default function FlagList({ setLanguage }) {
+  return (
+    <div className="flags">
+      {FLAGS.map(({ code, name, flag }) => (
+        <img
+          key={code}
+          src={`/flags/${flag}`}
+          alt={name}
+          title={name}
+          className="flag"
+          onClick={() => setLanguage(code)}
+          style={{ cursor: "pointer" }}
+        />
+      ))}
     </div>
   );
 }

@@ -681,3 +681,16 @@ body {
   color: #ffffff;
   font-weight: 600;
 }
+
+.flags {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.flag {
+  width: 30px;
+  height: 20px;
+  object-fit: fill;
+  display: block;
+}
