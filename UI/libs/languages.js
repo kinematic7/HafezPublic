@@ -6,6 +6,7 @@ export const LANGUAGES = [
   { code: "bosnian", name: "Bosnian (Bosanski)" },
   { code: "chinese", name: "Chinese (简体中文)" },
   { code: "french", name: "French (Français)" },
+  { code: "japanese", name: "Japanese (日本語)" },
   { code: "spanish", name: "Spanish (Español)" },
   { code: "indonesian", name: "Indonesian (Bahasa Indonesia)" },
   { code: "persian", name: "Persian / Farsi (فارسی)" },

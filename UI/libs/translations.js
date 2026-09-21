@@ -2579,6 +2579,7 @@ export const FLAGS = [
   { code: "bosnian", name: "Bosnian", flag: "ba.png" },  
   { code: "chinese", name: "Chinese", flag: "cn.png" },  
   { code: "french", name: "French", flag: "fr.png" },
+  { code: "japanese", name: "Japanese", flag: "jp.png" },
   { code: "indonesian", name: "Indonesian", flag: "id.png" },
   { code: "malay", name: "Malay", flag: "my.png" },
   { code: "persian", name: "Persian", flag: "ir.png" },
