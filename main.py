@@ -19,6 +19,7 @@ TRANSLITERATION_MAPS: Dict[str, Dict[Tuple[int, int], str]] = {
     "english": {},
     "bangla": {},
     "persian": {},
+    "urdu": {},
 }
 ARABIC_MAP: Dict[Tuple[int, int], str] = {}
 
@@ -26,6 +27,7 @@ TRANSLATION_MAPS: Dict[str, Dict[Tuple[int, int], str]] = {
     "english": {},
     "bangla": {},
     "persian": {},
+    "urdu": {}
 }
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -112,6 +114,13 @@ async def lifespan(app: FastAPI):
         ],
         TRANSLITERATION_MAPS["bangla"],
         "Bangla transliteration",
+    )
+    load_json_dataset(
+        [
+            str(DATA_DIR / "urdu_translation.json"),
+        ],
+        TRANSLATION_MAPS["urdu"],
+        "Urdu translation",
     )
     yield
 
@@ -305,7 +314,7 @@ class SurahRequest(BaseModel):
         default="all",
         description=(
             "Language filter (e.g., 'english', 'arabic', 'transliteration',"
-            " 'bangla', 'persian', 'all')."
+            " 'bangla', 'persian', 'urdu', 'all')."
         ),
     )
 

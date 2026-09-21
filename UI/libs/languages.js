@@ -4,6 +4,7 @@ export const LANGUAGES = [
   { code: "bangla", name: "Bengali / Bangla (বাংলা)" },
   { code: "english", name: "English" },
   { code: "persian", name: "Persian / Farsi (فارسی)" },
+  { code: "urdu", name: "Urdu (اردو)" },
 ];
 
 // languages.js

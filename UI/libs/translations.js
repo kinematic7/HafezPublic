@@ -2557,6 +2557,6 @@ export const FLAGS = [
   // { code: "indonesian", name: "Indonesian", flag: "id.png" },
   { code: "persian", name: "Persian", flag: "ir.png" },
   // { code: "malay", name: "Malay", flag: "my.png" },
-  // { code: "urdu", name: "Urdu", flag: "pk.png" },
+  { code: "urdu", name: "Urdu", flag: "pk.png" },
   // { code: "turkish", name: "Turkish", flag: "tr.png" },
 ];
