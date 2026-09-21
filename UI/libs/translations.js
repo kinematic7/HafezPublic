@@ -2552,7 +2552,7 @@ export const FLAGS = [
   { code: "english", name: "English", flag: "us.png" },
   { code: "bangla", name: "Bengali / Bangla", flag: "bd.png" },
   { code: "arabic", name: "Arabic", flag: "ksa.png" },
-  // { code: "spanish", name: "Spanish", flag: "es.png" },
+  { code: "spanish", name: "Spanish", flag: "es.png" },
   { code: "french", name: "French", flag: "fr.png" },
   { code: "indonesian", name: "Indonesian", flag: "id.png" },
   { code: "persian", name: "Persian", flag: "ir.png" },
