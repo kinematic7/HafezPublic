@@ -18,7 +18,8 @@ from surahlist import SURAH_NAMES
 TRANSLITERATION_MAPS: Dict[str, Dict[Tuple[int, int], str]] = {
     "english": {},
     "bangla": {},
-    "persian": {},
+    "indonesian": {},
+    "persian": {},    
     "urdu": {},
 }
 ARABIC_MAP: Dict[Tuple[int, int], str] = {}
@@ -26,7 +27,8 @@ ARABIC_MAP: Dict[Tuple[int, int], str] = {}
 TRANSLATION_MAPS: Dict[str, Dict[Tuple[int, int], str]] = {
     "english": {},
     "bangla": {},
-    "persian": {},
+    "indonesian": {},
+    "persian": {},    
     "urdu": {}
 }
 
@@ -121,6 +123,21 @@ async def lifespan(app: FastAPI):
         ],
         TRANSLATION_MAPS["urdu"],
         "Urdu translation",
+    )
+    load_json_dataset(
+        [
+            str(DATA_DIR / "transliteration.json"),
+            str(DATA_DIR / "quran_transliteration.json"),
+        ],
+        TRANSLITERATION_MAPS["indonesian"],
+        "Indonesian transliteration",
+    )
+    load_json_dataset(
+        [
+            str(DATA_DIR / "indonesian_translation.json"),
+        ],
+        TRANSLATION_MAPS["indonesian"],
+        "Indonesian translation",
     )
     yield
 

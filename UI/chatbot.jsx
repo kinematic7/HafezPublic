@@ -754,8 +754,8 @@ function QuranSearchApp() {
           )}       
 
           {/* DISPLAY CONTROLS */}
-          {(!isArabicSelected && !language==="persian" &&  
-          <div className="display-controls hide-on-mobile">
+          {(!isArabicSelected &&  
+          <div className="display-controls hide-on-mobile">            
             <label className="switch-control">
               <input
                 type="checkbox"
@@ -763,7 +763,7 @@ function QuranSearchApp() {
                 onChange={(e) => setShowArabic(e.target.checked)}
               />
               <span>{ARABIC_LABELS[language] || "Arabic"}</span>
-            </label>
+            </label>            
             <label className="switch-control">
                   <input
                     type="checkbox"
@@ -773,7 +773,7 @@ function QuranSearchApp() {
                   <span>{TRANSLATION_LABELS[language] || "Translation"}</span>
             </label>
 
-            {(
+            {!isArabicSelected && language !== "persian" && language !== "urdu" && (              
               <>
                 <label className="switch-control">
                   <input
@@ -942,7 +942,7 @@ function QuranSearchApp() {
                             <div className="arabic-text">{verse.arabic}</div>
                           )}
 
-                          {!isArabicSelected && !language === "persian" && verse.transliteration && showTransliteration && (
+                          {!isArabicSelected && language !== "persian" && language !== "urdu" && verse.transliteration && showTransliteration && (
                             <div className="transliteration-text">
                               <TranslatedTransliteration
                                 key={`translit-${verse.surah}-${verse.verse}-${language}`}
