@@ -700,16 +700,7 @@ function QuranSearchApp() {
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
               aria-label="Select Language"
-              style={{
-                padding: "6px 10px",
-                borderRadius: "6px",
-                border: "1px solid rgba(16, 185, 129, 0.4)",
-                background: "rgba(0, 0, 0, 0.2)",
-                color: "inherit",
-                fontSize: "12px",
-                fontWeight: "600",
-                cursor: "pointer"
-              }}
+              className="custom-select"
             >
               {LANGUAGES.map((lang) => (
                 <option key={lang.code} value={lang.code} style={{ background: "#1f2937", color: "#fff" }}>
@@ -730,16 +721,7 @@ function QuranSearchApp() {
                 onChange={handleSurahSelect}
                 disabled={loading}
                 aria-label="Select Surah"
-                style={{
-                  padding: "6px 10px",
-                  borderRadius: "6px",
-                  border: "1px solid rgba(16, 185, 129, 0.4)",
-                  background: "rgba(0, 0, 0, 0.2)",
-                  color: "inherit",
-                  fontSize: "12px",
-                  fontWeight: "600",
-                  cursor: "pointer"
-                }}
+                className="custom-select"
               >
                 <option value="all" style={{ background: "#1f2937", color: "#fff" }}>
                   {language === "bangla" || language === "bn" ? "সকল সূরা" : "All Surahs"}

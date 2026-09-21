@@ -692,3 +692,14 @@ body {
     justify-content: space-between;
   }
 }
+
+.custom-select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
