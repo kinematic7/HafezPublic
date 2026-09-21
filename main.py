@@ -21,6 +21,7 @@ TRANSLITERATION_MAPS: Dict[str, Dict[Tuple[int, int], str]] = {
     "english": {},
     "bangla": {},
     "bosnian": {},
+    "chinese": {},
     "french": {},
     "indonesian": {},
     "persian": {}, 
@@ -36,6 +37,7 @@ TRANSLATION_MAPS: Dict[str, Dict[Tuple[int, int], str]] = {
     "english": {},
     "bangla": {},
     "bosnian": {},
+    "chinese": {},
     "french": {},
     "indonesian": {},
     "persian": {},       
@@ -242,6 +244,21 @@ async def lifespan(app: FastAPI):
         ],
         TRANSLATION_MAPS["russian"],
         "Russian translation",
+    )
+    load_json_dataset(
+        [
+            str(DATA_DIR / "transliteration.json"),
+            str(DATA_DIR / "quran_transliteration.json"),
+        ],
+        TRANSLITERATION_MAPS["chinese"],
+        "Chinese transliteration",
+    )
+    load_json_dataset(
+        [
+            str(DATA_DIR / "chinese_translation.json"),
+        ],
+        TRANSLATION_MAPS["chinese"],
+        "Chinese translation",
     )
     yield
 
