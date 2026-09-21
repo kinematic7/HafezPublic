@@ -1062,7 +1062,6 @@ export default function FlagList({ setLanguage }) {
           title={name}
           className="flag"
           onClick={() => setLanguage(code)}
-          style={{ cursor: "pointer" }}
         />
       ))}
     </div>

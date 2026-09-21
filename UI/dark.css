@@ -571,15 +571,33 @@ body {
 
 .flags {
   display: flex;
-  gap: 4px;
+  flex-direction: row;
   align-items: center;
+  gap: 8px; /* Clean spacing between flags */
+  overflow-x: auto; /* Handles smaller screens gracefully if flags overflow */
+  padding: 4px 2px;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+.flags::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome/Safari */
 }
 
 .flag {
-  width: 30px;
+  width: 28px;
   height: 20px;
-  object-fit: fill;
+  object-fit: cover; /* Ensures flags don't distort */
   display: block;
+  border-radius: 4px; /* Softens harsh square edges */
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.flag:hover {
+  transform: translateY(-2px); /* Subtle lift effect */
+  border-color: var(--primary);
+  box-shadow: 0 4px 8px rgba(5, 150, 105, 0.25); /* Primary glow on hover */
 }
 
 /* Mobile responsive adjustments */
