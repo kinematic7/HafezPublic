@@ -50,7 +50,7 @@ body {
 
 .app-container {
   width: 100%;
-  max-width: 1100px;
+  max-width: 1050px;
   height: 95vh;
   height: 95dvh;
   background: var(--panel-bg);
@@ -64,7 +64,7 @@ body {
 
 @media (min-width: 769px) {
   .app-container {
-    min-width: 1100px;
+    min-width: 1050px;
   }
 }
 
