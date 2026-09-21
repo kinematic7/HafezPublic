@@ -2553,10 +2553,10 @@ export const FLAGS = [
   { code: "bangla", name: "Bengali / Bangla", flag: "bd.png" },
   { code: "arabic", name: "Arabic", flag: "ksa.png" },
   // { code: "spanish", name: "Spanish", flag: "es.png" },
-  // { code: "french", name: "French", flag: "fr.png" },
+  { code: "french", name: "French", flag: "fr.png" },
   { code: "indonesian", name: "Indonesian", flag: "id.png" },
   { code: "persian", name: "Persian", flag: "ir.png" },
-  // { code: "malay", name: "Malay", flag: "my.png" },
+  { code: "malay", name: "Malay", flag: "my.png" },
   { code: "urdu", name: "Urdu", flag: "pk.png" },
   // { code: "turkish", name: "Turkish", flag: "tr.png" },
 ];

@@ -13,13 +13,17 @@ from pydantic import BaseModel, Field, field_validator
 from quraningester import QuranIngester
 from surahlist import SURAH_NAMES
 
+# uvicorn main:app --reload --port 8000 - for server
+# python -m http.server 3000 - for client in powershel after going to the ui folder
 
 # --- In-Memory Hash Maps ---
 TRANSLITERATION_MAPS: Dict[str, Dict[Tuple[int, int], str]] = {
     "english": {},
     "bangla": {},
+    "french": {},
     "indonesian": {},
     "persian": {},    
+    "malay": {},
     "urdu": {},
 }
 ARABIC_MAP: Dict[Tuple[int, int], str] = {}
@@ -27,8 +31,10 @@ ARABIC_MAP: Dict[Tuple[int, int], str] = {}
 TRANSLATION_MAPS: Dict[str, Dict[Tuple[int, int], str]] = {
     "english": {},
     "bangla": {},
+    "french": {},
     "indonesian": {},
     "persian": {},    
+    "malay": {},
     "urdu": {}
 }
 
@@ -138,6 +144,36 @@ async def lifespan(app: FastAPI):
         ],
         TRANSLATION_MAPS["indonesian"],
         "Indonesian translation",
+    )
+    load_json_dataset(
+        [
+            str(DATA_DIR / "transliteration.json"),
+            str(DATA_DIR / "quran_transliteration.json"),
+        ],
+        TRANSLITERATION_MAPS["malay"],
+        "Malaysian transliteration",
+    )
+    load_json_dataset(
+        [
+            str(DATA_DIR / "malay_translation.json"),
+        ],
+        TRANSLATION_MAPS["malay"],
+        "Malaysian translation",
+    )
+    load_json_dataset(
+        [
+            str(DATA_DIR / "transliteration.json"),
+            str(DATA_DIR / "quran_transliteration.json"),
+        ],
+        TRANSLITERATION_MAPS["french"],
+        "French transliteration",
+    )
+    load_json_dataset(
+        [
+            str(DATA_DIR / "french_translation.json"),
+        ],
+        TRANSLATION_MAPS["french"],
+        "French translation",
     )
     yield
 

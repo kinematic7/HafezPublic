@@ -3,8 +3,10 @@ export const LANGUAGES = [
   { code: "arabic", name: "Arabic (العربية)" },
   { code: "bangla", name: "Bengali / Bangla (বাংলা)" },
   { code: "english", name: "English" },
+  { code: "french", name: "French (Français)" },
   { code: "indonesian", name: "Indonesian (Bahasa Indonesia)" },
   { code: "persian", name: "Persian / Farsi (فارسی)" },
+  { code: "malay", name: "Malay (Bahasa Melayu)" },
   { code: "urdu", name: "Urdu (اردو)" },
 ];
 
