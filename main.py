@@ -18,12 +18,14 @@ from surahlist import SURAH_NAMES
 TRANSLITERATION_MAPS: Dict[str, Dict[Tuple[int, int], str]] = {
     "english": {},
     "bangla": {},
+    "persian": {},
 }
 ARABIC_MAP: Dict[Tuple[int, int], str] = {}
 
 TRANSLATION_MAPS: Dict[str, Dict[Tuple[int, int], str]] = {
     "english": {},
     "bangla": {},
+    "persian": {},
 }
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -36,7 +38,6 @@ def load_json_dataset(
     file_found = False
     for path in file_paths:
         try:
-            # Change "utf-8" to "utf-8-sig" here
             with open(path, "r", encoding="utf-8-sig") as f:
                 data = json.load(f)
                 items = data.get(
@@ -59,6 +60,7 @@ def load_json_dataset(
             f"Warning: None of {file_paths} were found. {label.capitalize()}"
             " lookups will return default notices."
         )
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -93,7 +95,16 @@ async def lifespan(app: FastAPI):
             str(DATA_DIR / "bangla_translation.json"),
         ],
         TRANSLATION_MAPS["bangla"],
-        "Bangla translation",    
+        "Bangla translation",
+    )
+    load_json_dataset(
+        [
+            str(DATA_DIR / "farsi_translation.json"),
+            str(DATA_DIR / "quran_farsi_translation.json"),
+            str(DATA_DIR / "khorramdel_farsi_translation.json"),
+        ],
+        TRANSLATION_MAPS["persian"],
+        "Farsi translation",
     )
     load_json_dataset(
         [
@@ -294,7 +305,7 @@ class SurahRequest(BaseModel):
         default="all",
         description=(
             "Language filter (e.g., 'english', 'arabic', 'transliteration',"
-            " 'bangla', 'all')."
+            " 'bangla', 'persian', 'all')."
         ),
     )
 
@@ -342,12 +353,15 @@ class TranslationResponse(BaseModel):
     target_language: str
     translated_text: str
 
+
 class VerseTranslationRequest(BaseModel):
     chapter: int
     verse: int
     language: str
 
+
 # --- API Endpoints ---
+
 
 @app.post("/translate-verse")
 async def translate_verse(request: VerseTranslationRequest):
@@ -381,6 +395,7 @@ async def translate_verse(request: VerseTranslationRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.post("/transliterate-verse")
 async def transliterate_verse(request: VerseTranslationRequest):
     try:
@@ -412,6 +427,7 @@ async def transliterate_verse(request: VerseTranslationRequest):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/surah", tags=["Search Surah Directly"])
 def surah_endpoint(request: SurahRequest):

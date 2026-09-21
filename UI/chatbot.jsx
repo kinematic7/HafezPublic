@@ -754,7 +754,7 @@ function QuranSearchApp() {
           )}       
 
           {/* DISPLAY CONTROLS */}
-          {(!isArabicSelected &&  
+          {(!isArabicSelected && !language==="persian" &&  
           <div className="display-controls hide-on-mobile">
             <label className="switch-control">
               <input
@@ -942,7 +942,7 @@ function QuranSearchApp() {
                             <div className="arabic-text">{verse.arabic}</div>
                           )}
 
-                          {!isArabicSelected && verse.transliteration && showTransliteration && (
+                          {!isArabicSelected && !language === "persian" && verse.transliteration && showTransliteration && (
                             <div className="transliteration-text">
                               <TranslatedTransliteration
                                 key={`translit-${verse.surah}-${verse.verse}-${language}`}
@@ -957,15 +957,18 @@ function QuranSearchApp() {
 
                           {/* Fix applied: Removed the showTranslation boolean block wrapper, mapping disableTranslation to !showTranslation directly */}
                           {!isArabicSelected && verse.translation && (
-                            <div className="verse-translation-text">
-                           <TranslatedVerse
-                              key={`${verse.surah}-${verse.verse}-${language}`}
-                              chapter={verse.surah}
-                              verse={verse.verse}
-                              language={language}
-                              selectedLangObj={selectedLangObj}
-                              disableTranslation={!showTranslation}
-                          />
+                            <div className="verse-translation-text"
+                                 dir={['urdu', 'persian'].includes(language?.toLowerCase()) ? 'rtl' : 'ltr'}
+                                 style={{textAlign: ['urdu', 'persian'].includes(language?.toLowerCase()) ? 'right' : 'left' }}
+                            >
+                              <TranslatedVerse
+                                  key={`${verse.surah}-${verse.verse}-${language}`}
+                                  chapter={verse.surah}
+                                  verse={verse.verse}
+                                  language={language}
+                                  selectedLangObj={selectedLangObj}
+                                  disableTranslation={!showTranslation}
+                              />
                             </div>
                           )}
                         </div>
@@ -1016,7 +1019,7 @@ function QuranSearchApp() {
         {loading && (
           <div className="loading-box">
             <div className="spinner"></div>
-            <span>{SEARCHING_DATABASE_LABELS[language] || "Searching..."}</span>
+            <span>{SEARCHING_DATABASE_LABELS[language] || "Searching"}</span>
           </div>
         )}
       </div>
