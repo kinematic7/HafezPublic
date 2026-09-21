@@ -2,12 +2,14 @@
 export const LANGUAGES = [
   { code: "arabic", name: "Arabic (العربية)" },
   { code: "bangla", name: "Bengali / Bangla (বাংলা)" },
+  { code: "bosnian", name: "Bosnian (Bosanski)" },
   { code: "english", name: "English" },  
   { code: "french", name: "French (Français)" },
   { code: "spanish", name: "Spanish (Español)" },
   { code: "indonesian", name: "Indonesian (Bahasa Indonesia)" },
   { code: "persian", name: "Persian / Farsi (فارسی)" },
   { code: "malay", name: "Malay (Bahasa Melayu)" },
+  { code: "turkish", name: "Turkish (Türkçe)" },
   { code: "urdu", name: "Urdu (اردو)" },
 ];
 

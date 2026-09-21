@@ -20,11 +20,13 @@ from surahlist import SURAH_NAMES
 TRANSLITERATION_MAPS: Dict[str, Dict[Tuple[int, int], str]] = {
     "english": {},
     "bangla": {},
+    "bosnian": {},
     "french": {},
     "indonesian": {},
     "persian": {}, 
     "spanish": {},
     "malay": {},
+    "turkish": {},
     "urdu": {},
 }
 ARABIC_MAP: Dict[Tuple[int, int], str] = {}
@@ -32,11 +34,13 @@ ARABIC_MAP: Dict[Tuple[int, int], str] = {}
 TRANSLATION_MAPS: Dict[str, Dict[Tuple[int, int], str]] = {
     "english": {},
     "bangla": {},
+    "bosnian": {},
     "french": {},
     "indonesian": {},
     "persian": {},       
     "malay": {},
     "spanish": {},
+    "turkish": {},
     "urdu": {}
 }
 
@@ -191,6 +195,36 @@ async def lifespan(app: FastAPI):
         ],
         TRANSLATION_MAPS["spanish"],
         "Spanish translation",
+    )
+    load_json_dataset(
+        [
+            str(DATA_DIR / "transliteration.json"),
+            str(DATA_DIR / "quran_transliteration.json"),
+        ],
+        TRANSLITERATION_MAPS["turkish"],
+        "Turkish transliteration",
+    )
+    load_json_dataset(
+        [
+            str(DATA_DIR / "turkish_translation.json"),
+        ],
+        TRANSLATION_MAPS["turkish"],
+        "Turkish translation",
+    )
+    load_json_dataset(
+        [
+            str(DATA_DIR / "transliteration.json"),
+            str(DATA_DIR / "quran_transliteration.json"),
+        ],
+        TRANSLITERATION_MAPS["bosnian"],
+        "Bosnian transliteration",
+    )
+    load_json_dataset(
+        [
+            str(DATA_DIR / "bosnian_translation.json"),
+        ],
+        TRANSLATION_MAPS["bosnian"],
+        "Bosnian translation",
     )
     yield
 
