@@ -28,6 +28,7 @@ TRANSLITERATION_MAPS: Dict[str, Dict[Tuple[int, int], str]] = {
     "malay": {},
     "turkish": {},
     "urdu": {},
+    "russian": {}
 }
 ARABIC_MAP: Dict[Tuple[int, int], str] = {}
 
@@ -41,7 +42,8 @@ TRANSLATION_MAPS: Dict[str, Dict[Tuple[int, int], str]] = {
     "malay": {},
     "spanish": {},
     "turkish": {},
-    "urdu": {}
+    "urdu": {},
+    "russian": {},
 }
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -225,6 +227,21 @@ async def lifespan(app: FastAPI):
         ],
         TRANSLATION_MAPS["bosnian"],
         "Bosnian translation",
+    )
+    load_json_dataset(
+        [
+            str(DATA_DIR / "transliteration.json"),
+            str(DATA_DIR / "quran_transliteration.json"),
+        ],
+        TRANSLITERATION_MAPS["russian"],
+        "Russian transliteration",
+    )
+    load_json_dataset(
+        [
+            str(DATA_DIR / "russian_translation.json"),
+        ],
+        TRANSLATION_MAPS["russian"],
+        "Russian translation",
     )
     yield
 

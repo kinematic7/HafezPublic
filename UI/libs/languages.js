@@ -9,6 +9,7 @@ export const LANGUAGES = [
   { code: "indonesian", name: "Indonesian (Bahasa Indonesia)" },
   { code: "persian", name: "Persian / Farsi (فارسی)" },
   { code: "malay", name: "Malay (Bahasa Melayu)" },
+  { code: "russian", name: "Russian (Русский)" },
   { code: "turkish", name: "Turkish (Türkçe)" },
   { code: "urdu", name: "Urdu (اردو)" },
 ];

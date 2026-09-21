@@ -50,7 +50,7 @@ body {
 
 .app-container {
   width: 100%;
-  max-width: 980px; /* Expanded max width for large desktop screens */
+  max-width: 1100px; /* Expanded max width for large desktop screens */
   height: 95vh;
   height: 95dvh;
   background: var(--panel-bg);
@@ -65,7 +65,7 @@ body {
 /* Enforce desktop target width when screen space permits */
 @media (min-width: 769px) {
   .app-container {
-    min-width: 980px;
+    min-width: 1100px;
   }
 }
 
