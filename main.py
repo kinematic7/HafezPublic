@@ -791,36 +791,25 @@ def clear_hadith_endpoint():
             detail=f"Failed to clear hadith collection: {str(e)}",
         )
 
-
 @app.post("/translate", response_model=TranslationResponse)
 async def translate_text(payload: TranslationRequest):
-    if not payload.text.strip():
-        raise HTTPException(status_code=400, detail="Text cannot be empty.")
-
-    source_language = payload.language_name or payload.language
-
-    if not source_language or not source_language.strip():
-        raise HTTPException(
-            status_code=400, detail="Source language must be provided."
-        )
-
     prompt = (
-        f"Translate the following text from {source_language} into English. "
-        "Provide only the English translation without any explanation,"
-        f" context, or conversational fluff:\n\n{payload.text}"
+        f"Translate the following text from "
+        f"{payload.language_name or payload.language} into English.\n\n"
+        f"{payload.text}\n\n"
+        "Return ONLY the English translation."
     )
 
-    try:
-        translated_text = await asyncio.to_thread(chatbot.ask, prompt)
-        return TranslationResponse(
-            original_text=payload.text,
-            target_language="English",
-            translated_text=translated_text.strip(),
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Translation failed: {str(e)}"
-        )
+    translated_text = await asyncio.to_thread(
+        chatbot.ask,
+        prompt
+    )
+
+    return TranslationResponse(
+        original_text=payload.text,
+        target_language="English",
+        translated_text=translated_text.strip()
+    )
 
 
 @app.post("/translate-from-english", response_model=TranslationResponse)

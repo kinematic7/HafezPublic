@@ -71,6 +71,12 @@ async function translateFromEnglish(sourceText, languageCode, selectedLangObj) {
       throw new Error(`Translation request failed: ${response.statusText}`);
     }
 
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("TRANSLATE ERROR:", response.status, errorText);
+      throw new Error(`Translation failed: ${response.statusText}`);
+    }
+
     const data = await response.json();
     return data.translated_text || sourceText;
   } catch (err) {
@@ -382,6 +388,12 @@ function QuranSearchApp() {
 
     const targetLanguageName = langObj?.name || langCode;
 
+    console.log("TRANSLATION REQUEST:", {
+      text: sourceText,
+      language_name: targetLanguageName,
+      language: langCode
+    });
+
     const response = await fetch(`${serverBaseUrl}/translate`, {
       method: "POST",
       headers: {
@@ -393,8 +405,13 @@ function QuranSearchApp() {
         language: langCode
       })
     });
-
     if (!response.ok) {
+      const errorText = await response.text();
+
+      console.error("TRANSLATION ERROR");
+      console.error("Status:", response.status);
+      console.error("Response:", errorText);
+
       throw new Error(`Translation failed: ${response.statusText}`);
     }
 
@@ -423,6 +440,7 @@ function QuranSearchApp() {
     } else {
       const selectedLangLabel = selectedLangObj ? selectedLangObj.name : language;
       currentQuery = await translateContent(currentQuery, selectedLangObj, language);
+      console.log(currentQuery)
       languageInstruction = `\n\n(Respond strictly in ${selectedLangLabel}. Please translate the response, as well as the full relevant Quranic verses and Hadith sources, completely into ${selectedLangLabel}. Quote the entire quranic verse or hadith.)`;
     }
 
