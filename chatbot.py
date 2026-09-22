@@ -61,7 +61,7 @@ class ChatBot:
         return {"response": verified_response}
 
     def ask(self, question: str, context: str = "") -> str:
-        print(f"Question: {question}")
+        #print(f"Question: {question}")
 
         # Detect translation requests
         is_translation = question.strip().lower().startswith(
