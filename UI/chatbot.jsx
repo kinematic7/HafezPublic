@@ -85,29 +85,67 @@ async function translateFromEnglish(sourceText, languageCode, selectedLangObj) {
   }
 }
 
+//function renderFormattedText(text) {
+//  if (!text) return null;
+//  const lines = text.split("\n");
+
+//  return lines.map((line, lineIdx) => {
+//    const parts = line.split(/(\*\*.*?\*\*)/g);
+
+//    return (
+//      <React.Fragment key={lineIdx}>
+//        {parts.map((part, i) => {
+//          if (part.startsWith("**") && part.endsWith("**")) {
+//            return (
+//              <strong key={i} className="strong-highlight">
+//                {part.slice(2, -2)}
+//              </strong>
+//            );
+//          }
+//          return part;
+//        })}
+//        {lineIdx < lines.length - 1 && <br />}
+//      </React.Fragment>
+//    );
+//  });
+//}
+
 function renderFormattedText(text) {
-  if (!text) return null;
-  const lines = text.split("\n");
+    if (!text) return null;
+    const lines = text.split("\n");
 
-  return lines.map((line, lineIdx) => {
-    const parts = line.split(/(\*\*.*?\*\*)/g);
-
-    return (
-      <React.Fragment key={lineIdx}>
-        {parts.map((part, i) => {
-          if (part.startsWith("**") && part.endsWith("**")) {
+    return lines.map((line, lineIdx) => {
+        // Check if line contains a highlighted translation note span
+        const noteMatch = line.match(/<span class="translation-note-highlight">(.*?)<\/span>/);
+        if (noteMatch) {
             return (
-              <strong key={i} className="strong-highlight">
-                {part.slice(2, -2)}
-              </strong>
+                <React.Fragment key={lineIdx}>
+                    <div className="translation-note-banner">
+                        {noteMatch[1]}
+                    </div>
+                    {lineIdx < lines.length - 1 && <br />}
+                </React.Fragment>
             );
-          }
-          return part;
-        })}
-        {lineIdx < lines.length - 1 && <br />}
-      </React.Fragment>
-    );
-  });
+        }
+
+        const parts = line.split(/(\*\*.*?\*\*)/g);
+
+        return (
+            <React.Fragment key={lineIdx}>
+                {parts.map((part, i) => {
+                    if (part.startsWith("**") && part.endsWith("**")) {
+                        return (
+                            <strong key={i} className="strong-highlight">
+                                {part.slice(2, -2)}
+                            </strong>
+                        );
+                    }
+                    return part;
+                })}
+                {lineIdx < lines.length - 1 && <br />}
+            </React.Fragment>
+        );
+    });
 }
 
 const TranslatedVerse = ({ 
@@ -469,9 +507,10 @@ function QuranSearchApp() {
       const data = await response.json();
       const note = TRANSLATION_NOTES[language] || "";
       if (data.chatbot_response) {
-        data.chatbot_response += `\n\n${note}`;
+         //data.chatbot_response += note ? `\n\n<span class="translation-note-highlight">${note}</span>` : "";
+         data.chatbot_response = note ? `<span class="translation-note-highlight">${note}</span>` : "";
       }
-
+      
       if (
         typeof data === "object" &&
         data !== null &&
@@ -607,10 +646,11 @@ function QuranSearchApp() {
       });
 
       const note = TRANSLATION_NOTES[language] || "";
+      const formattedNote = note ? `\n\n<span class="translation-note-highlight">${note}</span>` : "";
 
       const summaryText = data?.chatbot_response
-        ? `${data.chatbot_response}\n\n${note}`
-        : `${SURAH_LABELS[language] || SURAH_LABELS.english || "Surah"} ${(language === "bangla" || language === "bn") ? (SURAHS_BANGLA[surahObj?.id - 1]?.name_bn || SURAHS_BANGLA.find?.(s => s.id === surahObj?.id)?.name_bn || surahObj?.name_en) : surahObj?.name_en} (${surahObj?.name_ar}) `;
+          ? `${data.chatbot_response}${formattedNote}`
+          : `${SURAH_LABELS[language] || SURAH_LABELS.english || "Surah"} ${(language === "bangla" || language === "bn") ? (SURAHS_BANGLA[surahObj?.id - 1]?.name_bn || SURAHS_BANGLA.find?.(s => s.id === surahObj?.id)?.name_bn || surahObj?.name_en) : surahObj?.name_en} (${surahObj?.name_ar}) ${formattedNote}`;
 
       setMessages([
         { role: "user", content: userPromptText, isStructured: false },

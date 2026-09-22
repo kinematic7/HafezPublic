@@ -64,11 +64,15 @@ class ChatBot:
         #print(f"Question: {question}")
 
         # Detect translation requests
-        is_translation = question.strip().lower().startswith(
+        is_translation_to_english = question.strip().lower().startswith(
             "translate the following text"
         )
 
-        if is_translation:
+        is_translation_from_english = question.strip().lower().startswith(
+            "translate the following english text"
+        )
+
+        if is_translation_to_english:
             prompt = (
                 f"{question}\n\n"
                 "Return ONLY the English translation. "
@@ -76,6 +80,20 @@ class ChatBot:
             )
 
             return self.llm.ask(prompt).strip()
+        
+                
+        # print(question)
+
+        if is_translation_from_english:
+            prompt = (
+                f"{question}\n\n"
+                "Return ONLY the translation. "
+                "Do not provide explanations, context, commentary, or additional text."
+            )
+
+            return self.llm.ask(prompt).strip()
+  
+        return ">>"
 
         # Normal Quran/Hadith RAG workflow
         result = self.app.invoke(
