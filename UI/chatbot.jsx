@@ -85,31 +85,6 @@ async function translateFromEnglish(sourceText, languageCode, selectedLangObj) {
   }
 }
 
-//function renderFormattedText(text) {
-//  if (!text) return null;
-//  const lines = text.split("\n");
-
-//  return lines.map((line, lineIdx) => {
-//    const parts = line.split(/(\*\*.*?\*\*)/g);
-
-//    return (
-//      <React.Fragment key={lineIdx}>
-//        {parts.map((part, i) => {
-//          if (part.startsWith("**") && part.endsWith("**")) {
-//            return (
-//              <strong key={i} className="strong-highlight">
-//                {part.slice(2, -2)}
-//              </strong>
-//            );
-//          }
-//          return part;
-//        })}
-//        {lineIdx < lines.length - 1 && <br />}
-//      </React.Fragment>
-//    );
-//  });
-//}
-
 function renderFormattedText(text) {
     if (!text) return null;
     const lines = text.split("\n");
