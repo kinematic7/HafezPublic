@@ -346,7 +346,7 @@ function QuranSearchApp() {
   useEffect(() => {
     const linkElement = document.getElementById("theme-stylesheet");
     if (linkElement) {
-      linkElement.href = theme === "dark" ? "dark.css" : "light.css";
+      linkElement.href = theme === "dark" ? "../css/dark.css" : "../css/light.css";
     }
   }, [theme]);
 
@@ -870,7 +870,7 @@ function QuranSearchApp() {
         {messages.length === 0 && (
           <div className="empty-state-card">
             <img
-              src="./islam.png"
+              src="../flags/islam.png"
               alt="Islamic Symbol"
               style={{ width: "200px", height: "200px", objectFit: "contain" }}
             />
